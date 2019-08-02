@@ -1,6 +1,7 @@
 #include "PointCloudManage.h"
+#include<iostream>
 #include <QtWidgets/QApplication>
-
+using namespace std;
 int main(int argc, char *argv[])
 {
 	cout << "hello world!" << endl;
