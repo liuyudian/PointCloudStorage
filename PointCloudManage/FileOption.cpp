@@ -1,4 +1,5 @@
 #include "FileOption.h"
+#include "PointCloudManage.h"
 #include <map>
 
 
@@ -109,5 +110,11 @@ void FileOption::AscToPcd()
 void FileOption::SaveAsPLY() 
 {
 
+}
+ 
+
+// ¶ÁÈ¡PCDÎÄ¼þ
+void FileOption::ReadPcd()
+{
 }
 
