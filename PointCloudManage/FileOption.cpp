@@ -1,5 +1,5 @@
 #include "FileOption.h"
-using namespace std;
+#include <map>
 
 
 FileOption::FileOption()
@@ -48,7 +48,6 @@ void FileOption::ReadAscFile(const char *cfilename)
 	}
 	//关闭文件，释放内存
 	fclose(pfile);
-	cout << size << endl;
 	ios::sync_with_stdio(false);
 	//AscToPcd(buffer);
 	//读取buffer中的点数据
@@ -59,7 +58,10 @@ void FileOption::ReadAscFile(const char *cfilename)
 	stringstream ss(buffer);
 	ss.get();
 	do {
-		ss >> a.x >> a.y >> a.z >> us1 >> us2 >> us3;
+		ss >> a.x >> a.y >> a.z ;
+		if (a.x== NULL)
+			break;
+
 		_mapPoint.insert(std::pair<int, MyPoint>(i, a));
 		cout << a.x << " " << a.y << " " << a.z << endl;
 		i++;
@@ -71,10 +73,11 @@ void FileOption::ReadAscFile(const char *cfilename)
 
 
 //.asc文件转Pcd文件
-void FileOption::AscToPcd(const char *buffer)
+void FileOption::AscToPcd()
 {
-	map<int, MyPoint>_mapPoint;
-	string fileName = "D:\\vs2017projects\\Task2\\maptest.ply";
+	if (_mapPoint.size() == 0)
+		return;
+	string fileName = "bunny.pcd";
 	ofstream OpenFile(fileName.c_str());
 	OpenFile.precision(std::numeric_limits<double>::digits10);
 	//ofstream OpenFile("D:\\vs2017projects\\Task2\\testmap.ply");
@@ -97,7 +100,7 @@ void FileOption::AscToPcd(const char *buffer)
 	// 读取点的信息
 	for (auto iter = _mapPoint.begin(); iter != _mapPoint.end(); iter++)
 	{
-		OpenFile << iter->first.x << " " << iter->first.y << " " << iter->first.z << endl;
+		OpenFile << iter->second.x<< " " << iter->second.y << " " << iter->second.z << endl;
 	}
 }
 

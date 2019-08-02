@@ -6,6 +6,7 @@ int main(int argc, char *argv[])
 {
 	FileOption f;
 	f.ReadAscFile("bunny.asc");
+	f.AscToPcd();
 	QApplication a(argc, argv);
 	PointCloudManage w;
 	w.show();
