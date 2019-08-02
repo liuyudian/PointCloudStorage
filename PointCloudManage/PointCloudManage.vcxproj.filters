@@ -39,6 +39,9 @@
     <ClCompile Include="DateDeal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Interface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="PointCloudManage.h">
@@ -57,6 +60,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DateDeal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
