@@ -36,6 +36,9 @@
     <ClCompile Include="PointCloudManage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DateDeal.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="FileOption.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -54,6 +57,11 @@
     <QtRcc Include="PointCloudManage.qrc">
       <Filter>Resource Files</Filter>
     </QtRcc>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DateDeal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FileOption.h">
