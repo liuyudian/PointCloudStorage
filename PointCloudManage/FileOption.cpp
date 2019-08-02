@@ -50,7 +50,20 @@ void FileOption::ReadAscFile(const char *cfilename)
 	fclose(pfile);
 	cout << size << endl;
 	ios::sync_with_stdio(false);
-	AscToPcd(buffer);
+	//AscToPcd(buffer);
+	//读取buffer中的点数据
+	int i = 0;
+	string us1, us2, us3;
+	//float x, y, z; //点的坐标
+	MyPoint a;
+	stringstream ss(buffer);
+	ss.get();
+	do {
+		ss >> a.x >> a.y >> a.z >> us1 >> us2 >> us3;
+		_mapPoint.insert(std::pair<int, MyPoint>(i, a));
+		cout << a.x << " " << a.y << " " << a.z << endl;
+		i++;
+	} while (1);
 	ios::sync_with_stdio(true);
 	free(buffer);
 
@@ -60,6 +73,7 @@ void FileOption::ReadAscFile(const char *cfilename)
 //.asc文件转Pcd文件
 void FileOption::AscToPcd(const char *buffer)
 {
+
 	
 }
 

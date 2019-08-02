@@ -3,6 +3,9 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <map>
+#include"MyPoint.h"
+//using namespace std;
 /*
 
 	点云的文件操作
@@ -13,7 +16,7 @@ class FileOption
 public:
 
 	//特性
-
+	map<int, MyPoint> _mapPoint;
 	FileOption();
 	~FileOption();
 
