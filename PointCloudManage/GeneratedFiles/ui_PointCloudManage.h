@@ -16,15 +16,17 @@
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
+#include "QVTKWidget.h"
 
 QT_BEGIN_NAMESPACE
 
 class Ui_PointCloudManageClass
 {
 public:
+    QWidget *centralWidget;
+    QVTKWidget *qvtkWidget;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
-    QWidget *centralWidget;
     QStatusBar *statusBar;
 
     void setupUi(QMainWindow *PointCloudManageClass)
@@ -32,15 +34,19 @@ public:
         if (PointCloudManageClass->objectName().isEmpty())
             PointCloudManageClass->setObjectName(QString::fromUtf8("PointCloudManageClass"));
         PointCloudManageClass->resize(600, 400);
+        centralWidget = new QWidget(PointCloudManageClass);
+        centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
+        qvtkWidget = new QVTKWidget(centralWidget);
+        qvtkWidget->setObjectName(QString::fromUtf8("qvtkWidget"));
+        qvtkWidget->setGeometry(QRect(260, 90, 100, 100));
+        PointCloudManageClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(PointCloudManageClass);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
+        menuBar->setGeometry(QRect(0, 0, 600, 26));
         PointCloudManageClass->setMenuBar(menuBar);
         mainToolBar = new QToolBar(PointCloudManageClass);
         mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));
-        PointCloudManageClass->addToolBar(mainToolBar);
-        centralWidget = new QWidget(PointCloudManageClass);
-        centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
-        PointCloudManageClass->setCentralWidget(centralWidget);
+        PointCloudManageClass->addToolBar(Qt::TopToolBarArea, mainToolBar);
         statusBar = new QStatusBar(PointCloudManageClass);
         statusBar->setObjectName(QString::fromUtf8("statusBar"));
         PointCloudManageClass->setStatusBar(statusBar);
