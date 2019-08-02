@@ -117,6 +117,7 @@
     <ClCompile Include="DateDeal.cpp" />
     <ClCompile Include="Interface.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MyPoint.cpp" />
     <ClCompile Include="PointCloudManage.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -131,6 +132,7 @@
   <ItemGroup>
     <ClInclude Include="DateDeal.h" />
     <ClInclude Include="Interface.h" />
+    <ClInclude Include="MyPoint.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FileOption.h" />
