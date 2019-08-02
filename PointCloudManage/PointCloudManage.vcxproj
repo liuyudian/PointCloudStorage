@@ -113,6 +113,7 @@
     </QtRcc>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FileOption.cpp" />
     <ClCompile Include="DateDeal.cpp" />
     <ClCompile Include="Interface.cpp" />
     <ClCompile Include="main.cpp" />
@@ -130,6 +131,9 @@
   <ItemGroup>
     <ClInclude Include="DateDeal.h" />
     <ClInclude Include="Interface.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="FileOption.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
