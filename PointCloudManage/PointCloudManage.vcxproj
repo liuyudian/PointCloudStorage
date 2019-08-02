@@ -113,6 +113,7 @@
     </QtRcc>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FileOption.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PointCloudManage.cpp" />
   </ItemGroup>
@@ -124,6 +125,9 @@
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="PointCloudManage.qrc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="FileOption.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
