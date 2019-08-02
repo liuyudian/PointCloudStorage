@@ -4,7 +4,7 @@
 using namespace std;
 int main(int argc, char *argv[])
 {
-	cout << "hello world! 123123" << endl;
+	cout << "hello world! 123151523" << endl;
 	QApplication a(argc, argv);
 	PointCloudManage w;
 	w.show();
