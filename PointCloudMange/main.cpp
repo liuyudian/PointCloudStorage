@@ -3,7 +3,7 @@
 
 int main(int argc, char *argv[])
 {
-	cout << endl;
+	cout << "hello world"<<endl;
 	QApplication a(argc, argv);
 	PointCloudMange w;
 	w.show();
