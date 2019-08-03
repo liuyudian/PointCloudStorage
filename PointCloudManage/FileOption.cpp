@@ -1,7 +1,7 @@
 #include "FileOption.h"
-#include "PointCloudManage.h"
+//#include "PointCloudManage.h"
 #include <map>
-
+using namespace std;
 
 FileOption::FileOption()
 {
