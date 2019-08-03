@@ -11,6 +11,7 @@ int main(int argc, char *argv[])
 	//f.ReadAscFile("bunny.asc");
 	//f.AscToPcd();
 	//f.ReadPcd();
+	//ui.pushButton->setText(tr("(hello)"));
 	QApplication a(argc, argv);
 	PointCloudManage w;
 	w.show();
