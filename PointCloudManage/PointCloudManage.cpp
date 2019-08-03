@@ -22,7 +22,7 @@ void PointCloudManage::ShowModel()
 {
 	QFile file;
 	QString f = QFileDialog::getOpenFileName(this, QString("OpenFile"),
-		QString("/"), QString("ASC(*.pcd)"));
+		QString("/"), QString("ASC(*.asc)"));
 	qDebug() << f;
 	//VTK_Show(f);
 
