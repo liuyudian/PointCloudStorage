@@ -28,8 +28,7 @@ public:
     QVTKWidget *qvtkWidget;
     QPushButton *pushButton_2;
     QPushButton *pushButton;
-    QPushButton *pushButton_3;
-    QPushButton *pushButton_4;
+    QPushButton *pushButton3;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -50,12 +49,9 @@ public:
         pushButton = new QPushButton(centralWidget);
         pushButton->setObjectName(QString::fromUtf8("pushButton"));
         pushButton->setGeometry(QRect(0, 10, 93, 28));
-        pushButton_3 = new QPushButton(centralWidget);
-        pushButton_3->setObjectName(QString::fromUtf8("pushButton_3"));
-        pushButton_3->setGeometry(QRect(0, 140, 93, 28));
-        pushButton_4 = new QPushButton(centralWidget);
-        pushButton_4->setObjectName(QString::fromUtf8("pushButton_4"));
-        pushButton_4->setGeometry(QRect(10, 220, 93, 28));
+        pushButton3 = new QPushButton(centralWidget);
+        pushButton3->setObjectName(QString::fromUtf8("pushButton3"));
+        pushButton3->setGeometry(QRect(0, 140, 93, 28));
         PointCloudManageClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(PointCloudManageClass);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
@@ -78,8 +74,7 @@ public:
         PointCloudManageClass->setWindowTitle(QApplication::translate("PointCloudManageClass", "PointCloudManage", nullptr));
         pushButton_2->setText(QApplication::translate("PointCloudManageClass", "\345\217\246\345\255\230\344\270\272", nullptr));
         pushButton->setText(QApplication::translate("PointCloudManageClass", "\346\211\223\345\274\200\346\226\207\344\273\266", nullptr));
-        pushButton_3->setText(QApplication::translate("PointCloudManageClass", "PCL\346\230\276\347\244\272", nullptr));
-        pushButton_4->setText(QApplication::translate("PointCloudManageClass", "PushButton", nullptr));
+        pushButton3->setText(QApplication::translate("PointCloudManageClass", "\346\250\241\345\236\213\346\230\276\347\244\272", nullptr));
     } // retranslateUi
 
 };

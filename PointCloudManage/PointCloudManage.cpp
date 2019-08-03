@@ -12,7 +12,7 @@ PointCloudManage::PointCloudManage(QWidget *parent):
 	ui->qvtkWidget->update();
 	// 添加关联
 	connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(ShowModel()));
-	connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(PclShow()));
+	connect(ui->pushButton3, SIGNAL(clicked()), this, SLOT(VTK_Show()));
 	
 
 }
@@ -22,9 +22,9 @@ void PointCloudManage::ShowModel()
 {
 	QFile file;
 	QString f = QFileDialog::getOpenFileName(this, QString("OpenFile"),
-		QString("/"), QString("ASC(*.asc)"));
+		QString("/"), QString("ASC(*.pcd)"));
 	qDebug() << f;
-	VTK_Show(f);
+	//VTK_Show(f);
 
 	
 	
@@ -32,13 +32,13 @@ void PointCloudManage::ShowModel()
 }
 
 //在vtk控件中显示点云
-void PointCloudManage::VTK_Show(QString s) 
+void PointCloudManage::VTK_Show()
 {
-	ui.pushButton->setText(tr("(hello)"));
-	pcl::PointCloud<pcl::PointXYZRGB>::Ptr  cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
-	pcl::io::loadPCDFile<pcl::PointXYZRGB>("bun0.pcd", *cloud);
+	ui->pushButton3->setText(tr("(hello)"));
+	pcl::PointCloud<pcl::PointXYZ>::Ptr  cloud(new pcl::PointCloud<pcl::PointXYZ>);
+	pcl::io::loadPCDFile<pcl::PointXYZ>("bunny.pcd", *cloud);
 
-	if (pcl::io::loadPCDFile<pcl::PointXYZ>("bun0.pcd", *cloud) == -1)
+	if (pcl::io::loadPCDFile<pcl::PointXYZ>("bunny.pcd", *cloud) == -1)
 	{
 		std::cout << "Cloud reading failed." << std::endl;
 		return;
@@ -57,26 +57,4 @@ void PointCloudManage::VTK_Show(QString s)
 	//system("pause");
 }
 
-// PCL界面显示
-void PointCloudManage::PclShow()
-{
-	pcl::PointCloud<pcl::PointXYZ>::Ptr  cloud(new pcl::PointCloud<pcl::PointXYZ>);
-	pcl::io::loadPCDFile<pcl::PointXYZ>("bunny.pcd", *cloud);
-
-	if (pcl::io::loadPCDFile<pcl::PointXYZ>("bunny.pcd", *cloud) == -1)
-	{
-		std::cout << "Cloud reading failed." << std::endl;
-		return ;
-	}
-
-	std::cout << cloud->width << std::endl;
-	std::cout << cloud->height;
-
-	pcl::visualization::CloudViewer viewer1("viewer");
-	viewer1.showCloud(cloud);
-	while (!viewer1.wasStopped())
-	{
-	}
-	//system("pause");
-}
 

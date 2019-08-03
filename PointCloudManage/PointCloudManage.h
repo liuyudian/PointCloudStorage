@@ -45,7 +45,7 @@ private:
 	Ui::PointCloudManageClass *ui;
 
 public slots:
-	void OpenFile(); //打开文件
-	void VTK_Show(QString s);//在vtk控件中显示点云
+	void ShowModel(); //打开文件
+	void VTK_Show();//在vtk控件中显示点云
 
 };
