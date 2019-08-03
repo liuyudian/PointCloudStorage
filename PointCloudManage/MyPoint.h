@@ -6,6 +6,6 @@ public:
 	~MyPoint();
 
 	//Ьиад
-	float x, y, z;
+	float x, y, z,R,G,B;
 };
 

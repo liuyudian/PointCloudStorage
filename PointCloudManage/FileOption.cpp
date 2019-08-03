@@ -60,6 +60,9 @@ void FileOption::ReadAscFile(const char *cfilename)
 	ss.get();
 	do {
 		ss >> a.x >> a.y >> a.z ;
+		a.R = 1;
+		a.G = 1;
+		a.B = 1;
 		if (a.x== NULL)
 			break;
 
@@ -101,7 +104,7 @@ void FileOption::AscToPcd()
 	// 读取点的信息
 	for (auto iter = _mapPoint.begin(); iter != _mapPoint.end(); iter++)
 	{
-		OpenFile << iter->second.x<< " " << iter->second.y << " " << iter->second.z << endl;
+		OpenFile << iter->second.x<< " " << iter->second.y << " " << iter->second.z <<" "<<iter->second.R<<" "<<iter->second.G<<" "<<iter->second.B<< endl;
 	}
 }
 

@@ -25,15 +25,20 @@ class PointCloudManage : public QMainWindow
 public:
 	PointCloudManage(QWidget *parent = Q_NULLPTR);
 
-private:
-	Ui::PointCloudManageClass ui;
+protected:
 	pcl::visualization::PCLVisualizer::Ptr viewer;
 	PointCloudT::Ptr cloud;
+
 	unsigned int red;
 	unsigned int green;
 	unsigned int blue;
 
+
+private:
+	Ui::PointCloudManageClass *ui;
+
 public slots:
-	void OpenFile();
+	void ShowModel();
+	void PclShow();
 
 };
