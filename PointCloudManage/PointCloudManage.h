@@ -1,9 +1,16 @@
 #pragma once
-
+//QT的头文件
 #include <QtWidgets/QMainWindow>
 #include "ui_PointCloudManage.h"
-
+#include <QFileInfo>//qt文件操作头文件
 #include <QMainWindow>
+#include <QApplication>
+#include <QFileDialog>
+#include <QDebug>
+#include <QString>
+
+
+//pcl和vtk的头文件
 #include <vtkRenderWindow.h>
 #include<pcl/io/pcd_io.h>
 #include<pcl/point_types.h>
@@ -34,6 +41,7 @@ private:
 	unsigned int blue;
 
 public slots:
-	void OpenFile();
+	void OpenFile(); //打开文件
+	void VTK_Show(QString s);//在vtk控件中显示点云
 
 };

@@ -27,5 +27,6 @@ public:
 	void AscToPcd(); //.asc文件转Pcd文件
 	void SaveAsPLY(); //把划分好的三角面片另存为.ply文件
 	void ReadPcd(); // 读取PCD文件
+	
 };
 
