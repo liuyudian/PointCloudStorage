@@ -132,7 +132,7 @@ void subdivision()
 	// Ö¸¶¨°ë¾¶
 	float radius = 256.0f * rand() / (RAND_MAX + 1.0f);
 
-	std::cout << "Neighbors within radius search at (" << searchPoint.x
+	std::cout << " Neighbors within radius search at (" << searchPoint.x
 		<< " " << searchPoint.y
 		<< " " << searchPoint.z
 		<< ") with radius=" << radius << std::endl;
