@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <ctime>
+using namespace std;
 void subdivision();
 PointCloudManage::PointCloudManage(QWidget *parent):
 	 QMainWindow(parent)
@@ -18,6 +19,7 @@ PointCloudManage::PointCloudManage(QWidget *parent):
 	connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(ShowModel()));//打开按钮
 	//connect(ui->pushButton3, SIGNAL(clicked()), this, SLOT(VTK_Show()));
 	connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(SaveAsPLY()));//另存为按钮
+	connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(subdivision()));//另存为按钮
 
 }
 
@@ -72,9 +74,9 @@ void PointCloudManage::VTK_Show(string s)
 }
 
 // 空间分割
-void subdivision()
+void PointCloudManage::subdivision()
 {
-	cout << "*************************************空间剖分******************************" << endl;
+	std::cout << "*************************************空间剖分******************************" << std::endl;
 	srand((unsigned int)time(NULL));
 
 	// 定义和实例化一个PointCloud在这个数据结构，并随机生成点云
@@ -91,6 +93,14 @@ void subdivision()
 		cloud->points[i].y = 1024.0f * rand() / (RAND_MAX + 1.0f);
 		cloud->points[i].z = 1024.0f * rand() / (RAND_MAX + 1.0f);
 	}
+
+	pcl::visualization::PointCloudColorHandlerGenericField<pcl::PointXYZ> fildColor(cloud, "z"); // 按照z字段进行渲染
+	viewer->addPointCloud<pcl::PointXYZ>(cloud, fildColor, "sample cloud");
+	viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, "sample cloud");
+
+	viewer->updatePointCloud(cloud, "cloud");
+	ui->qvtkWidget->update();
+
 
 	// 设置分辨率并初始化octree实例，octree保持了叶子节点的下标。
 
@@ -112,7 +122,7 @@ void subdivision()
 	pcl::PointXYZ searchPoint;
 
 	// 输出叶子节点
-	cout << "叶子节点:  " << octreenode.getLeafCount() << endl;
+	std::cout << "叶子节点:  " << octreenode.getLeafCount() << std::endl;
 
 	for (size_t i = 0; i < cloud->points.size(); ++i)
 	{
@@ -120,7 +130,7 @@ void subdivision()
 		{
 			std::cout << "叶子节点： " << cloud->points[i].x
 				<< " " << cloud->points[i].y
-				<< " " << cloud->points[i].z << endl;
+				<< " " << cloud->points[i].z << std::endl;
 		}
 	}
 

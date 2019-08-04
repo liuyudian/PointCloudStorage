@@ -52,4 +52,5 @@ public slots:
 	void ShowModel(); //打开文件
 	void VTK_Show(string s);//在vtk控件中显示点云
 	void SaveAsPLY();//把最终的模型另存为ply文件
+	void subdivision();
 };
