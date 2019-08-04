@@ -15,9 +15,9 @@ PointCloudManage::PointCloudManage(QWidget *parent):
 	viewer->setupInteractor(ui->qvtkWidget->GetInteractor(), ui->qvtkWidget->GetRenderWindow());
 	ui->qvtkWidget->update();
 	// 添加关联
-	connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(ShowModel()));
-	connect(ui->pushButton3, SIGNAL(clicked()), this, SLOT(VTK_Show()));
-	
+	connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(ShowModel()));//打开按钮
+	//connect(ui->pushButton3, SIGNAL(clicked()), this, SLOT(VTK_Show()));
+	connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(SaveAsPLY()));//另存为按钮
 
 }
 
@@ -25,10 +25,16 @@ PointCloudManage::PointCloudManage(QWidget *parent):
 void PointCloudManage::ShowModel()
 {
 	QFile file;
+	FileOption fo;
 	QString f = QFileDialog::getOpenFileName(this, QString("OpenFile"),
-		QString("/"), QString("ASC(*.asc)"));
+		QString("/"), QString("ASC(*.asc);;PCD(*.pcd)"));
+	//QString转char * 
+	QByteArray temp = f.toLocal8Bit();
+	char *name = temp.data();
 	qDebug() << f;
-	//VTK_Show(f);
+	fo.ReadAscFile(name);
+	string s=fo.AscToPcd();
+	VTK_Show(s);
 
 	
 	
@@ -36,15 +42,16 @@ void PointCloudManage::ShowModel()
 }
 
 //在vtk控件中显示点云
-void PointCloudManage::VTK_Show()
+void PointCloudManage::VTK_Show(string s)
 {
-	ui->pushButton3->setText(tr("(hello)"));
+	
+	ui->pushButton3->setText(tr("()"));
 	pcl::PointCloud<pcl::PointXYZ>::Ptr  cloud(new pcl::PointCloud<pcl::PointXYZ>);
-	pcl::io::loadPCDFile<pcl::PointXYZ>("bunny.pcd", *cloud);
+	pcl::io::loadPCDFile<pcl::PointXYZ>(s, *cloud);
 
-	if (pcl::io::loadPCDFile<pcl::PointXYZ>("bunny.pcd", *cloud) == -1)
+	if (pcl::io::loadPCDFile<pcl::PointXYZ>(s, *cloud) == -1)
 	{
-		std::cout << "Cloud reading failed." << std::endl;
+		std::cout << "Cloud reading failed。" << std::endl;
 		return;
 	}
 
@@ -148,6 +155,12 @@ void subdivision()
 			// 下标点与搜索点的平方距离
 			<< " (squared distance: " << pointRadiusSquaredDistance[i] << ")" << std::endl;
 	}
+
+}
+
+//把最终的模型另存为ply文件
+void PointCloudManage::SaveAsPLY() 
+{
 
 }
 

@@ -1,4 +1,7 @@
 #pragma once
+//自定义类文件
+#include"FileOption.h"
+
 //QT的头文件
 #include <QtWidgets/QMainWindow>
 #include "ui_PointCloudManage.h"
@@ -47,6 +50,6 @@ private:
 
 public slots:
 	void ShowModel(); //打开文件
-	void VTK_Show();//在vtk控件中显示点云
-
+	void VTK_Show(string s);//在vtk控件中显示点云
+	void SaveAsPLY();//把最终的模型另存为ply文件
 };
