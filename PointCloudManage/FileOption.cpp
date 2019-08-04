@@ -67,7 +67,7 @@ void FileOption::ReadAscFile(const char *cfilename)
 			break;
 
 		_mapPoint.insert(std::pair<int, MyPoint>(i, a));
-		cout << a.x << " " << a.y << " " << a.z << endl;
+		//cout << a.x << " " << a.y << " " << a.z << endl;
 		i++;
 	} while (1);
 	ios::sync_with_stdio(true);
@@ -77,10 +77,10 @@ void FileOption::ReadAscFile(const char *cfilename)
 
 
 //.asc文件转Pcd文件
-void FileOption::AscToPcd()
+string FileOption::AscToPcd()
 {
 	if (_mapPoint.size() == 0)
-		return;
+		return 0;
 	string fileName = "bunny.pcd";
 	ofstream OpenFile(fileName.c_str());
 	OpenFile.precision(std::numeric_limits<double>::digits10);
@@ -104,6 +104,7 @@ void FileOption::AscToPcd()
 	{
 		OpenFile << iter->second.x<< " " << iter->second.y << " " << iter->second.z <<" "<<iter->second.R<<" "<<iter->second.G<<" "<<iter->second.B<< endl;
 	}
+	return fileName;
 }
 
 

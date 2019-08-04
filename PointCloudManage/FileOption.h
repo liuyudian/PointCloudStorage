@@ -24,7 +24,7 @@ public:
 	//功能函数
 
 	void ReadAscFile(const char *cfilename); //读取.asc文件
-	void AscToPcd(); //.asc文件转Pcd文件
+	string AscToPcd(); //.asc文件转Pcd文件
 	void SaveAsPLY(); //把划分好的三角面片另存为.ply文件
 	void ReadPcd(); // 读取PCD文件
 	
