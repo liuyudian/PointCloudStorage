@@ -41,7 +41,7 @@ void PointCloudManage::ShowModel()
 void PointCloudManage::VTK_Show(string s)
 {
 	
-	ui->pushButton3->setText(tr("(hello)"));
+	ui->pushButton3->setText(tr("()"));
 	pcl::PointCloud<pcl::PointXYZ>::Ptr  cloud(new pcl::PointCloud<pcl::PointXYZ>);
 	pcl::io::loadPCDFile<pcl::PointXYZ>(s, *cloud);
 
