@@ -18,6 +18,7 @@
 #include <pcl/visualization/cloud_viewer.h>
 
 typedef pcl::PointXYZRGBA PointT;
+typedef pcl::PointXYZRGBA LeafT;
 typedef pcl::PointCloud<PointT> PointCloudT;
 #include "vtkAutoInit.h"
 

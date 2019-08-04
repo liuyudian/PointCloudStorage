@@ -1,5 +1,9 @@
 #include "PointCloudManage.h"
-
+#include <pcl/octree/octree.h>
+#include <iostream>
+#include <vector>
+#include <ctime>
+void subdivision();
 PointCloudManage::PointCloudManage(QWidget *parent):
 	 QMainWindow(parent)
 {
@@ -55,6 +59,96 @@ void PointCloudManage::VTK_Show()
 	ui->qvtkWidget->update();
 
 	//system("pause");
+	subdivision();
+	
+	
+}
+
+// 空间分割
+void subdivision()
+{
+	cout << "*************************************空间剖分******************************" << endl;
+	srand((unsigned int)time(NULL));
+
+	// 定义和实例化一个PointCloud在这个数据结构，并随机生成点云
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
+
+	// Generate pointcloud data
+	cloud->width = 1000;
+	cloud->height = 1;
+	cloud->points.resize(cloud->width * cloud->height);
+
+	for (size_t i = 0; i < cloud->points.size(); ++i)
+	{
+		cloud->points[i].x = 1024.0f * rand() / (RAND_MAX + 1.0f);
+		cloud->points[i].y = 1024.0f * rand() / (RAND_MAX + 1.0f);
+		cloud->points[i].z = 1024.0f * rand() / (RAND_MAX + 1.0f);
+	}
+
+	// 设置分辨率并初始化octree实例，octree保持了叶子节点的下标。
+
+	float resolution = 128.0f;
+
+	pcl::octree::OctreePointCloudSearch<pcl::PointXYZ> octree(resolution);
+
+	pcl::octree::OctreePointCloud<pcl::PointXYZ> octreenode(resolution);
+
+	// 设置输入点云
+	octreenode.setInputCloud(cloud);
+	octree.setInputCloud(cloud);
+	// 从输入点云构建八叉树
+	octreenode.addPointsFromInputCloud();
+
+	octree.addPointsFromInputCloud();
+
+
+	pcl::PointXYZ searchPoint;
+
+	// 输出叶子节点
+	cout << "叶子节点:  " << octreenode.getLeafCount() << endl;
+
+	for (size_t i = 0; i < cloud->points.size(); ++i)
+	{
+		if (octreenode.findLeaf(cloud->points[i].x, cloud->points[i].y, cloud->points[i].z))
+		{
+			std::cout << "叶子节点： " << cloud->points[i].x
+				<< " " << cloud->points[i].y
+				<< " " << cloud->points[i].z << endl;
+		}
+	}
+
+
+	// 随机搜索点的生成
+	searchPoint.x = 1024.0f * rand() / (RAND_MAX + 1.0f);
+	searchPoint.y = 1024.0f * rand() / (RAND_MAX + 1.0f);
+	searchPoint.z = 1024.0f * rand() / (RAND_MAX + 1.0f);
+
+	// 按照半径进行搜索
+	// Neighbors within radius search
+
+	std::vector<int> pointIdxRadiusSearch;
+	std::vector<float> pointRadiusSquaredDistance;
+
+	// 指定半径
+	float radius = 256.0f * rand() / (RAND_MAX + 1.0f);
+
+	std::cout << "Neighbors within radius search at (" << searchPoint.x
+		<< " " << searchPoint.y
+		<< " " << searchPoint.z
+		<< ") with radius=" << radius << std::endl;
+
+    // 随机生成的某个顶点在空间半径r范围内的领域点
+	if (octree.radiusSearch(searchPoint, radius, pointIdxRadiusSearch, pointRadiusSquaredDistance) > 0)
+	{
+		for (size_t i = 0; i < pointIdxRadiusSearch.size(); ++i)
+			// 搜索点的坐标
+			std::cout << "    " << cloud->points[pointIdxRadiusSearch[i]].x
+			<< " " << cloud->points[pointIdxRadiusSearch[i]].y
+			<< " " << cloud->points[pointIdxRadiusSearch[i]].z
+			// 下标点与搜索点的平方距离
+			<< " (squared distance: " << pointRadiusSquaredDistance[i] << ")" << std::endl;
+	}
+
 }
 
 
