@@ -47,7 +47,7 @@ void PointCloudManage::VTK_Show(string s)
 
 	if (pcl::io::loadPCDFile<pcl::PointXYZ>(s, *cloud) == -1)
 	{
-		std::cout << "Cloud reading failed" << std::endl;
+		std::cout << "Cloud reading failed¡£" << std::endl;
 		return;
 	}
 
