@@ -76,6 +76,19 @@
      <string>空间划分</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton_5">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>290</y>
+      <width>93</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>三角网格剖分</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -86,6 +99,13 @@
      <height>26</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menu11">
+    <property name="title">
+     <string>文件</string>
+    </property>
+    <addaction name="action11"/>
+   </widget>
+   <addaction name="menu11"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -96,6 +116,11 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="action11">
+   <property name="text">
+    <string>打开文件</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
