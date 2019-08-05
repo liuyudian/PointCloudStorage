@@ -11,6 +11,7 @@
 #include <QFileDialog>
 #include <QDebug>
 #include <QString>
+#include <QAction>
 
 
 //pcl和vtk的头文件
@@ -19,6 +20,22 @@
 #include<pcl/point_types.h>
 #include<pcl/point_cloud.h>
 #include <pcl/visualization/cloud_viewer.h>
+//空间划分头文件
+#include <pcl/point_types.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/io/vtk_io.h>
+#include <pcl/kdtree/kdtree_flann.h>
+#include <pcl/features/normal_3d.h>
+#include <pcl/surface/gp3.h>
+#include <pcl/visualization/pcl_visualizer.h>
+#include <boost/thread/thread.hpp>
+#include <fstream>
+#include <iostream>
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+
+
 
 typedef pcl::PointXYZRGBA PointT;
 typedef pcl::PointXYZRGBA LeafT;
@@ -54,4 +71,6 @@ public slots:
 	void VTK_Show(string s);//在vtk控件中显示点云
 	void SaveAsPLY();//把最终的模型另存为ply文件
 	void GetLeafShow();
+	void subdivision();
+	void Triangulation();//三角网格剖分
 };
