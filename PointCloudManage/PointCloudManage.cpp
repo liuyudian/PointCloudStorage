@@ -4,7 +4,12 @@
 #include <vector>
 #include <ctime>
 using namespace std;
-void subdivision();
+FileOption fo;
+
+vector<MyPoint>vecPoint;
+int countLeaf = 0;
+void GetLeaf(pcl::PointCloud<pcl::PointXYZ>::Ptr  cloud);
+
 PointCloudManage::PointCloudManage(QWidget *parent):
 	 QMainWindow(parent)
 {
@@ -19,15 +24,48 @@ PointCloudManage::PointCloudManage(QWidget *parent):
 	connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(ShowModel()));//打开按钮
 	//connect(ui->pushButton3, SIGNAL(clicked()), this, SLOT(VTK_Show()));
 	connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(SaveAsPLY()));//另存为按钮
-	connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(subdivision()));//另存为按钮
+	//connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(subdivision()));//另存为按钮
+	connect(ui->pushButton_4, SIGNAL(clicked()), this, SLOT(GetLeafShow()));//另存为按钮
 
+}
+
+// 叶子节点显示
+void PointCloudManage::GetLeafShow()
+{
+	pcl::PointCloud<pcl::PointXYZRGB>::Ptr  cloudLeaf(new pcl::PointCloud<pcl::PointXYZRGB>);
+
+	cloudLeaf->width = countLeaf;
+	cloudLeaf->height = 1;
+	cloudLeaf->points.resize(cloudLeaf->width * cloudLeaf->height);
+
+	for (size_t i = 0; i < vecPoint.size(); ++i)
+	{
+		cloudLeaf->points[i].x = vecPoint[i].x;
+		cloudLeaf->points[i].y = vecPoint[i].y;
+		cloudLeaf->points[i].z = vecPoint[i].z;
+		cloudLeaf->points[i].r = 255;
+		cloudLeaf->points[i].g= 255;
+
+		cloudLeaf->points[i].b = 255;
+
+	}
+	//std::cout << "***********叶子节点个数************:  " << cloudLeaf->points.size()<< std::endl;
+
+	//subdivision();
+	//system("pause");
+	//subdivision();
+	//pcl::visualization::PointCloudColorHandlerGenericField<pcl::PointXYZRGB> fildColor(cloudLeaf, "z"); // 按照z字段进行渲染
+	//viewer->addPointCloud<pcl::PointXYZRGB>(cloudLeaf, fildColor, "sample cloud");
+	viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 6, "sample cloud");
+
+	viewer->updatePointCloud(cloudLeaf, "cloudLeaf");
+	ui->qvtkWidget->update();
 }
 
 // 按钮响应事件测试,打开文件
 void PointCloudManage::ShowModel()
 {
 	QFile file;
-	FileOption fo;
 	QString f = QFileDialog::getOpenFileName(this, QString("OpenFile"),
 		QString("/"), QString("ASC(*.asc);;PCD(*.pcd)"));
 	//QString转char * 
@@ -37,18 +75,15 @@ void PointCloudManage::ShowModel()
 	fo.ReadAscFile(name);
 	string s=fo.AscToPcd();
 	VTK_Show(s);
-
-	
-	
-	
 }
 
 //在vtk控件中显示点云
 void PointCloudManage::VTK_Show(string s)
 {
-	
 	ui->pushButton3->setText(tr("()"));
+
 	pcl::PointCloud<pcl::PointXYZ>::Ptr  cloud(new pcl::PointCloud<pcl::PointXYZ>);
+
 	pcl::io::loadPCDFile<pcl::PointXYZ>(s, *cloud);
 
 	if (pcl::io::loadPCDFile<pcl::PointXYZ>(s, *cloud) == -1)
@@ -59,56 +94,31 @@ void PointCloudManage::VTK_Show(string s)
 
 	pcl::visualization::PointCloudColorHandlerGenericField<pcl::PointXYZ> fildColor(cloud, "z"); // 按照z字段进行渲染
 	viewer->addPointCloud<pcl::PointXYZ>(cloud, fildColor, "sample cloud");
-	viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, "sample cloud");
+	viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
 
-	std::cout << cloud->width << std::endl;
-	std::cout << cloud->height;
-
+	std::cout <<"宽："<< cloud->width << std::endl;
+	std::cout <<"高："<< cloud->height<<std::endl;
 	viewer->updatePointCloud(cloud, "cloud");
 	ui->qvtkWidget->update();
+	// 查找叶子节点
+	 GetLeaf(cloud);
 
-	//system("pause");
-	subdivision();
-	
-	
+
 }
 
-// 空间分割
-void PointCloudManage::subdivision()
+// 获取叶子节点
+void GetLeaf(pcl::PointCloud<pcl::PointXYZ>::Ptr  cloud)
 {
-	std::cout << "*************************************空间剖分******************************" << std::endl;
-	srand((unsigned int)time(NULL));
+	// 存储叶子节点
+	pcl::PointCloud<pcl::PointXYZ>::Ptr  cloudLeaf(new pcl::PointCloud<pcl::PointXYZ>);
 
-	// 定义和实例化一个PointCloud在这个数据结构，并随机生成点云
-	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
-
-	// Generate pointcloud data
-	cloud->width = 1000;
-	cloud->height = 1;
-	cloud->points.resize(cloud->width * cloud->height);
-
-	for (size_t i = 0; i < cloud->points.size(); ++i)
-	{
-		cloud->points[i].x = 1024.0f * rand() / (RAND_MAX + 1.0f);
-		cloud->points[i].y = 1024.0f * rand() / (RAND_MAX + 1.0f);
-		cloud->points[i].z = 1024.0f * rand() / (RAND_MAX + 1.0f);
-	}
-
-	pcl::visualization::PointCloudColorHandlerGenericField<pcl::PointXYZ> fildColor(cloud, "z"); // 按照z字段进行渲染
-	viewer->addPointCloud<pcl::PointXYZ>(cloud, fildColor, "sample cloud");
-	viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, "sample cloud");
-
-	viewer->updatePointCloud(cloud, "cloud");
-	ui->qvtkWidget->update();
-
-
-	// 设置分辨率并初始化octree实例，octree保持了叶子节点的下标。
-
-	float resolution = 128.0f;
+	// 最小体素的边长
+	float resolution = 1.0;
 
 	pcl::octree::OctreePointCloudSearch<pcl::PointXYZ> octree(resolution);
 
 	pcl::octree::OctreePointCloud<pcl::PointXYZ> octreenode(resolution);
+//	octreenode.setTreeDepth(3);
 
 	// 设置输入点云
 	octreenode.setInputCloud(cloud);
@@ -122,39 +132,50 @@ void PointCloudManage::subdivision()
 	pcl::PointXYZ searchPoint;
 
 	// 输出叶子节点
-	std::cout << "叶子节点:  " << octreenode.getLeafCount() << std::endl;
 
 	for (size_t i = 0; i < cloud->points.size(); ++i)
 	{
 		if (octreenode.findLeaf(cloud->points[i].x, cloud->points[i].y, cloud->points[i].z))
 		{
+			// 显示叶子节点
 			std::cout << "叶子节点： " << cloud->points[i].x
 				<< " " << cloud->points[i].y
 				<< " " << cloud->points[i].z << std::endl;
+			MyPoint mypoint(cloud->points[i].x, cloud->points[i].y, cloud->points[i].z);
+			vecPoint.push_back(mypoint);
+			countLeaf++;
+			// 存储cloudLeaf
+			//cloudLeaf->points[countLeaf] = cloud->points[i];
+			//countLeaf++;
 		}
 	}
+	std::cout << "**********叶子节点个数*********" << octree.getLeafCount() << std::endl;
+	std::cout << "叶子节点个数:  " << countLeaf << std::endl;
+	// 对叶子节点容器初始化
 
+	// 指定半径，第几个点
+	float radius = 10;
 
-	// 随机搜索点的生成
-	searchPoint.x = 1024.0f * rand() / (RAND_MAX + 1.0f);
-	searchPoint.y = 1024.0f * rand() / (RAND_MAX + 1.0f);
-	searchPoint.z = 1024.0f * rand() / (RAND_MAX + 1.0f);
+	// 求节点的r领域内的点
+	int index = 0;
+	auto it=fo._mapPoint.find(index);
 
-	// 按照半径进行搜索
-	// Neighbors within radius search
-
-	std::vector<int> pointIdxRadiusSearch;
-	std::vector<float> pointRadiusSquaredDistance;
-
-	// 指定半径
-	float radius = 256.0f * rand() / (RAND_MAX + 1.0f);
+	if (it != fo._mapPoint.end())
+	{
+		searchPoint.x = it->second.x;
+		searchPoint.y = it->second.y;
+		searchPoint.z = it->second.z;
+	}
 
 	std::cout << " Neighbors within radius search at " << searchPoint.x
 		<< " " << searchPoint.y
 		<< " " << searchPoint.z
 		<< ") with radius=" << radius << std::endl;
 
-    // 随机生成的某个顶点在空间半径r范围内的领域点
+	std::vector<int> pointIdxRadiusSearch;
+	std::vector<float> pointRadiusSquaredDistance;
+
+	// 随机生成的某个顶点在空间半径r范围内的领域点
 	if (octree.radiusSearch(searchPoint, radius, pointIdxRadiusSearch, pointRadiusSquaredDistance) > 0)
 	{
 		for (size_t i = 0; i < pointIdxRadiusSearch.size(); ++i)
@@ -165,7 +186,6 @@ void PointCloudManage::subdivision()
 			// 下标点与搜索点的平方距离
 			<< " (squared distance: " << pointRadiusSquaredDistance[i] << ")" << std::endl;
 	}
-
 }
 
 //把最终的模型另存为ply文件
