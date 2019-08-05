@@ -1,5 +1,7 @@
 #include "PointCloudManage.h"
 #include <pcl/octree/octree.h>
+#include <fstream>
+#include <sstream>
 #include <iostream>
 #include <vector>
 #include <ctime>
@@ -12,6 +14,9 @@ FileOption fo;
 vector<MyPoint>vecPoint;
 int countLeaf = 0;
 void GetLeaf(pcl::PointCloud<pcl::PointXYZ>::Ptr  cloud);
+pcl::PolygonMesh triangles;//创建多边形网格，用于存储结果
+pcl::PointCloud<pcl::PointXYZ>::Ptr cloudTriangles(new pcl::PointCloud<pcl::PointXYZ>);
+
 
 PointCloudManage::PointCloudManage(QWidget *parent):
 	 QMainWindow(parent)
@@ -27,7 +32,7 @@ PointCloudManage::PointCloudManage(QWidget *parent):
 	connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(ShowModel()));//打开按钮
 	//connect(ui->pushButton3, SIGNAL(clicked()), this, SLOT(VTK_Show()));
 	connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(SaveAsPLY()));//另存为按钮
-	connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(subdivision()));//另存为按钮
+	//connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(subdivision()));//另存为按钮
 	connect(ui->pushButton_5, SIGNAL(clicked()), this, SLOT(Triangulation()));//三角网格剖分
 	//connect(action11, SIGNAL(clicked()), this, SLOT(Triangulation()));
 }
@@ -194,8 +199,7 @@ void GetLeaf(pcl::PointCloud<pcl::PointXYZ>::Ptr  cloud)
 //三角网格剖分
 void PointCloudManage::Triangulation()
 {
-	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
-	if (pcl::io::loadPCDFile<pcl::PointXYZ>("bunny.pcd", *cloud) == -1) 
+	if (pcl::io::loadPCDFile<pcl::PointXYZ>("bunny.pcd", *cloudTriangles) == -1)
 	{
 		PCL_ERROR("Couldn't read file bunny.pcd\n");
 			return ;
@@ -204,20 +208,19 @@ void PointCloudManage::Triangulation()
 	pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> n;
 	pcl::PointCloud<pcl::Normal>::Ptr normals(new pcl::PointCloud<pcl::Normal>);
 	pcl::search::KdTree < pcl::PointXYZ >::Ptr tree(new pcl::search::KdTree < pcl::PointXYZ >);
-	tree->setInputCloud(cloud);
-	n.setInputCloud(cloud);
+	tree->setInputCloud(cloudTriangles);
+	n.setInputCloud(cloudTriangles);
 	n.setSearchMethod(tree);
 	n.setKSearch(20);
 	n.compute(*normals);//法线
 	//将点云和法线放在一起
 	pcl::PointCloud<pcl::PointNormal>::Ptr Cloud_With_Normals(new pcl::PointCloud<pcl::PointNormal>);
-	pcl::concatenateFields(*cloud, *normals, *Cloud_With_Normals);
+	pcl::concatenateFields(*cloudTriangles, *normals, *Cloud_With_Normals);
 	//创建查找树
 	pcl::search::KdTree<pcl::PointNormal>::Ptr tree2(new pcl::search::KdTree < pcl::PointNormal >);
 	tree2->setInputCloud(Cloud_With_Normals);
 	//初始化对象
 	pcl::GreedyProjectionTriangulation < pcl::PointNormal > gp3;
-	pcl::PolygonMesh triangles;//创建多边形网格，用于存储结果
 	//设置参数
 	gp3.setSearchRadius(8);//设置连接点之间的最大距离（最大边长）用于确定k近邻的球半径，搜索半径
 	gp3.setMu(2.5);//设置最近邻距离的乘子，已经得到每个点的最终搜索半径
@@ -249,14 +252,14 @@ void PointCloudManage::Triangulation()
 	{
 		viewer->spinOnce(100);
 		boost::this_thread::sleep(boost::posix_time::microseconds(100000));
-	}	
-	//ui->qvtkWidget->update();
+	}
+	ui->qvtkWidget->update();
 }
 
 //把最终的模型另存为ply文件
 void PointCloudManage::SaveAsPLY() 
 {
-
+	fo.SaveAsPLY(cloudTriangles,triangles);
 }
 
 
