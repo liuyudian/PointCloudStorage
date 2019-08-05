@@ -49,7 +49,6 @@ void PointCloudManage::GetLeafShow()
 		cloudLeaf->points[i].b = 255;
 
 	}
-	//std::cout << "***********叶子节点个数************:  " << cloudLeaf->points.size()<< std::endl;
 
 	//subdivision();
 	//system("pause");
