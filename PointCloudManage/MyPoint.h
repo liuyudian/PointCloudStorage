@@ -3,6 +3,7 @@ class MyPoint
 {
 public:
 	MyPoint();
+	MyPoint(float a1,float b1, float c1);
 	~MyPoint();
 
 	//Ьиад

@@ -63,17 +63,17 @@
      <string>模型显示</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_3">
+   <widget class="QPushButton" name="pushButton_4">
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>220</y>
+      <y>200</y>
       <width>93</width>
       <height>28</height>
      </rect>
     </property>
     <property name="text">
-     <string>空间划分</string>
+     <string>叶子节点</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_5">
