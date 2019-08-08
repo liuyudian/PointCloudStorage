@@ -317,12 +317,12 @@ void PointCloudManage::Triangulation()
 	//初始化对象
 	pcl::GreedyProjectionTriangulation < pcl::PointNormal > gp3;
 	//设置参数
-	gp3.setSearchRadius(8);//设置连接点之间的最大距离（最大边长）用于确定k近邻的球半径，搜索半径
-	gp3.setMu(2.5);//设置最近邻距离的乘子，已经得到每个点的最终搜索半径
-	gp3.setMaximumNearestNeighbors(150);//设置搜索的最近邻点的最大数量
-	gp3.setMaximumSurfaceAngle(2*M_PI / 1);//45度最大平面角
-	gp3.setMinimumAngle(M_PI / 144);//三角形的最小角度10度
-	gp3.setMaximumAngle(2 * M_PI /2.2 );//三角形的最大角度120度
+	gp3.setSearchRadius(2.5);//设置连接点之间的最大距离（最大边长）用于确定k近邻的球半径，搜索半径
+	gp3.setMu(2);//设置最近邻距离的乘子，已经得到每个点的最终搜索半径，即搜索半径
+	gp3.setMaximumNearestNeighbors(100);//设置搜索的最近邻点的最大数量
+	gp3.setMaximumSurfaceAngle(M_PI / 4);//45度最大平面角
+	gp3.setMinimumAngle(M_PI / 18);//三角形的最小角度10度
+	gp3.setMaximumAngle(2 * M_PI /2 );//三角形的最大角度120度
 	gp3.setNormalConsistency(false);//若法向量一致，设为true
 	//设置搜索方法和输出点云
 	gp3.setInputCloud(Cloud_With_Normals);
@@ -343,6 +343,7 @@ void PointCloudManage::Triangulation()
 	viewer->setBackgroundColor(0,0,0);
 	viewer->addPolygonMesh(triangles, "my");//设置显示的网格
 	viewer->initCameraParameters();
+	
 	while (!viewer->wasStopped()) 
 	{
 		viewer->spinOnce(100);
