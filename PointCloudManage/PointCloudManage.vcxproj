@@ -124,6 +124,7 @@
     <ClCompile Include="Interface.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyPoint.cpp" />
+    <ClCompile Include="OCtreeNode.cpp" />
     <ClCompile Include="PointCloudManage.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -139,6 +140,7 @@
     <ClInclude Include="DateDeal.h" />
     <ClInclude Include="Interface.h" />
     <ClInclude Include="MyPoint.h" />
+    <ClInclude Include="OCtreeNode.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FileOption.h" />

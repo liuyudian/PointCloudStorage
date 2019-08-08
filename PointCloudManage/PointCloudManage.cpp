@@ -135,7 +135,7 @@ void GetLeaf(pcl::PointCloud<pcl::PointXYZ>::Ptr  cloud)
 
 	octree.addPointsFromInputCloud();
 
-
+	
 	pcl::PointXYZ searchPoint;
 
 	// 输出叶子节点
