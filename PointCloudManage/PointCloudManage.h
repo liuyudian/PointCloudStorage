@@ -72,4 +72,5 @@ public slots:
 	void SaveAsPLY();//把最终的模型另存为ply文件
 	void GetLeafShow();
 	void Triangulation();//三角网格剖分
+	void MeshGeneration();//自定义网格剖分
 };

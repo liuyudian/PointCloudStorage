@@ -89,6 +89,19 @@
      <string>三角网格剖分</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButtonGrid">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>370</y>
+      <width>101</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>自定义网格剖分</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

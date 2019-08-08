@@ -1,5 +1,7 @@
 #include "PointCloudManage.h"
 #include <pcl/octree/octree.h>
+#include <pcl/common/common.h>
+#include <pcl/point_types.h>
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -37,9 +39,26 @@ PointCloudManage::PointCloudManage(QWidget *parent):
 	connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(SaveAsPLY()));//另存为按钮
 	connect(ui->pushButton_4, SIGNAL(clicked()), this, SLOT(GetLeafShow()));//另存为按钮
 	connect(ui->pushButton_5, SIGNAL(clicked()), this, SLOT(Triangulation()));//三角网格剖分
-	//connect(action11, SIGNAL(clicked()), this, SLOT(Triangulation()));
+	connect(ui->pushButtonGrid, SIGNAL(clicked()), this, SLOT(MeshGeneration()));//三角网格剖分
+
+																			  
+																			  //connect(action11, SIGNAL(clicked()), this, SLOT(Triangulation()));
 }
 
+// 自定义网格剖分
+void PointCloudManage::MeshGeneration()
+{
+	// 点云数据读取
+	pcl::PointCloud<pcl::PointXYZ>::Ptr  cloud1(new pcl::PointCloud<pcl::PointXYZ>);
+
+	pcl::io::loadPCDFile<pcl::PointXYZ>("bunny.pcd", *cloud1);
+
+	if (pcl::io::loadPCDFile<pcl::PointXYZ>("bunny.pcd", *cloud1) == -1)
+	{
+		std::cout << "Cloud reading failed。" << std::endl;
+		return;
+	}
+}
 
 
 class MaxAndMin
