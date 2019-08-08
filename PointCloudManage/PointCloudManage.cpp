@@ -152,7 +152,7 @@ void PointCloudManage::GetLeafShow()
 
 	octree.addPointsFromInputCloud();
 
-
+	
 	pcl::PointXYZ searchPoint;
 
 	int depth = 5;
@@ -191,16 +191,8 @@ void PointCloudManage::GetLeafShow()
 			 countll++;
 		 }
 	}
-	std::cout << "去重后的极值个数： " << _mapMaxMin.size() << std::endl;
-	while (!viewer.wasStopped())
-	{
-		viewer.spinOnce(1);
-	}
-	std::cout << "去重后的极值个数： " << _mapMaxMin.size() << std::endl;
-	// 排序，去重
-	//sort(_vector.begin(), _vector.end(),cmp1);
-	//_vector.erase(unique(_vector.begin(), _vector.end()), _vector.end());
-
+	std::cout << "**********叶子节点个数********" << octree.getLeafCount() << std::endl;
+	std::cout << "叶子节点个数:  " << countLeaf << std::endl;
 	// 对叶子节点容器初始化
 
 	// 指定半径，第几个点

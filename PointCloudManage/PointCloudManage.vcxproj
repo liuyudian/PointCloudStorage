@@ -118,6 +118,7 @@
     </QtRcc>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ARGS.cpp" />
     <ClCompile Include="FileOption.cpp" />
     <ClCompile Include="DateDeal.cpp" />
     <ClCompile Include="Interface.cpp" />
@@ -135,6 +136,7 @@
     <QtRcc Include="PointCloudManage.qrc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ARGS.h" />
     <ClInclude Include="DateDeal.h" />
     <ClInclude Include="Interface.h" />
     <ClInclude Include="MyPoint.h" />
