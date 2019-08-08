@@ -119,12 +119,12 @@
     </QtRcc>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ARGS.cpp" />
     <ClCompile Include="FileOption.cpp" />
     <ClCompile Include="DateDeal.cpp" />
     <ClCompile Include="Interface.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyPoint.cpp" />
-    <ClCompile Include="OCtreeNode.cpp" />
     <ClCompile Include="PointCloudManage.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -137,10 +137,10 @@
     <QtRcc Include="PointCloudManage.qrc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ARGS.h" />
     <ClInclude Include="DateDeal.h" />
     <ClInclude Include="Interface.h" />
     <ClInclude Include="MyPoint.h" />
-    <ClInclude Include="OCtreeNode.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FileOption.h" />

@@ -156,7 +156,7 @@ void GetLeaf(pcl::PointCloud<pcl::PointXYZ>::Ptr  cloud)
 			//countLeaf++;
 		}
 	}
-	std::cout << "**********叶子节点个数*********" << octree.getLeafCount() << std::endl;
+	std::cout << "**********叶子节点个数********" << octree.getLeafCount() << std::endl;
 	std::cout << "叶子节点个数:  " << countLeaf << std::endl;
 	// 对叶子节点容器初始化
 

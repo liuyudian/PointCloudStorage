@@ -48,7 +48,7 @@
     <ClCompile Include="MyPoint.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OCtreeNode.cpp">
+    <ClCompile Include="ARGS.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -77,7 +77,7 @@
     <ClInclude Include="MyPoint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OCtreeNode.h">
+    <ClInclude Include="ARGS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
