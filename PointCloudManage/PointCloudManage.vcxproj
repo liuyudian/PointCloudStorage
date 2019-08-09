@@ -119,12 +119,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ARGS.cpp" />
+    <ClCompile Include="CCloudOctree.cpp" />
+    <ClCompile Include="CEdge.cpp" />
     <ClCompile Include="FileOption.cpp" />
     <ClCompile Include="DateDeal.cpp" />
+    <ClCompile Include="CloudNode.cpp" />
     <ClCompile Include="Interface.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyPoint.cpp" />
     <ClCompile Include="PointCloudManage.cpp" />
+    <ClCompile Include="Surface.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="PointCloudManage.h" />
@@ -137,9 +141,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ARGS.h" />
+    <ClInclude Include="CCloudOctree.h" />
+    <ClInclude Include="CEdge.h" />
     <ClInclude Include="DateDeal.h" />
+    <ClInclude Include="CloudNode.h" />
     <ClInclude Include="Interface.h" />
     <ClInclude Include="MyPoint.h" />
+    <ClInclude Include="Surface.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FileOption.h" />
