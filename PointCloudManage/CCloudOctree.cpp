@@ -4,11 +4,12 @@ CCloudOctree::CCloudOctree()
 {
 
 }
-
-
 CCloudOctree::~CCloudOctree()
 {
+
 }
+
+// 获取领域
 vector<pcl::PointXYZ> CCloudOctree::GetField(float L, pcl::PointXYZ pn)
 {
 	// 获取领域点集
@@ -45,10 +46,10 @@ vector<pcl::PointXYZ> CCloudOctree::GetField(float L, pcl::PointXYZ pn)
 			<< " (squared distance: " << pointRadiusSquaredDistance[i] << ")" << std::endl;
 
 			pcl::PointXYZ pn1(cloud->points[pointIdxRadiusSearch[i]].x, cloud->points[pointIdxRadiusSearch[i]].y, cloud->points[pointIdxRadiusSearch[i]].z);
-
+			_vectorPointNode.push_back(pn1);
 		 }
 	}
-	return vector<pcl::PointXYZ>();
+	return _vectorPointNode;
 }
 
 // 设置点云和八叉树

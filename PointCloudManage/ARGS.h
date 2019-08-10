@@ -4,6 +4,7 @@
 #include <pcl/point_types.h>
 #include "CEdge.h"
 #include "Surface.h"
+#include "CCloudOctree.h"
 #include<vector>
 using namespace std;
 
@@ -17,16 +18,16 @@ public:
 	~ARGS();
 
 	// 选择种子三角片
-	//Surface SelectSurface();
+	Surface SelectSurface();
 
 
-	// 获取候选点集,参数：活动边，活动边所在的三角面片,点云数据
-	//vector<PointNode> GetCandidate(Edge currentEdge, Surface surface, OctreeNode goct);
+	// 获取候选点集,参数：活动边，,活动边之前的边，活动边之后的边，活动边所在的三角面片,点云数据
+	vector<pcl::PointXYZ> GetCandidate(CEdge currentEdge, CEdge frontEdge, CEdge rearEdge, Surface surface);
 
 	// 候选点添加代价
-	//vector<pcl::PointXYZ> AddCost(Surface seedSurface);
+	vector<pcl::PointXYZ> AddCost(Surface seedSurface);
 
 	// 最佳点筛选
-	//vector<pcl::PointXYZ> GetBestPointNode(vector<pcl::PointXYZ> candidatePointNode);
+	vector<pcl::PointXYZ> GetBestPointNode(vector<pcl::PointXYZ> candidatePointNode);
 };
 

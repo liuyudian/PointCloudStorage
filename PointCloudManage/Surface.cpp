@@ -8,7 +8,7 @@ Surface::~Surface()
 {
 }
 
-/*float Surface::GetMaxLen()
+float Surface::GetMaxLen()
 {
 // 获取最大边的长度
 	float L = 0.0f;
@@ -35,4 +35,13 @@ Surface::~Surface()
 		}
 	}
 	return L;
-}*/
+}
+
+// 判断点是否在三角面片之中
+bool Surface::isWithin(pcl::PointXYZ p)
+{
+	
+	/*return  (bx - ax) * (y - ay) > (by - ay) * (x - ax) &&
+		(cx - bx) * (y - by) > (cy - by) * (x - bx) &&
+		(ax - cx) * (y - cy) > (ay - cy) * (x - cx) ? false : true;*/
+}

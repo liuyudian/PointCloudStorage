@@ -6,10 +6,10 @@ using namespace std;
 class CCloudOctree
 {
 public:
+
 	CCloudOctree();
 	~CCloudOctree();
 
-	vector<pcl::PointXYZ> GetField();
 	// 获取领域点
 	vector<pcl::PointXYZ> CCloudOctree::GetField(float L, pcl::PointXYZ pn);
 

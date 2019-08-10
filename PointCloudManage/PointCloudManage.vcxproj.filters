@@ -51,9 +51,6 @@
     <ClCompile Include="ARGS.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CloudNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Surface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -90,9 +87,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ARGS.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CloudNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Surface.h">
