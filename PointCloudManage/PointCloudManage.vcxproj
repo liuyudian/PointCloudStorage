@@ -45,7 +45,6 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\PCL_Visualizer-master\PropertySheet.props" />
-    <Import Project="PropertySheet1.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -120,13 +119,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ARGS.cpp" />
+    <ClCompile Include="CCloudOctree.cpp" />
+    <ClCompile Include="CEdge.cpp" />
     <ClCompile Include="FileOption.cpp" />
     <ClCompile Include="DateDeal.cpp" />
+    <ClCompile Include="CloudNode.cpp" />
     <ClCompile Include="Interface.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyPoint.cpp" />
     <ClCompile Include="PointCloudManage.cpp" />
-    <ClCompile Include="scsacs.cpp" />
+    <ClCompile Include="Surface.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="PointCloudManage.h" />
@@ -139,10 +141,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ARGS.h" />
+    <ClInclude Include="CCloudOctree.h" />
+    <ClInclude Include="CEdge.h" />
     <ClInclude Include="DateDeal.h" />
+    <ClInclude Include="CloudNode.h" />
     <ClInclude Include="Interface.h" />
     <ClInclude Include="MyPoint.h" />
-    <ClInclude Include="scsacs.h" />
+    <ClInclude Include="Surface.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FileOption.h" />

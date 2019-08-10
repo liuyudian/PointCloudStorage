@@ -15,8 +15,6 @@ MyPoint::~MyPoint()
 }
 
 
-
 MyPoint::MyPoint()
 {
-	
 }
