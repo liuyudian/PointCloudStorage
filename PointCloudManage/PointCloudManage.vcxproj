@@ -126,6 +126,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyPoint.cpp" />
     <ClCompile Include="PointCloudManage.cpp" />
+    <ClCompile Include="scsacs.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="PointCloudManage.h" />
@@ -141,6 +142,7 @@
     <ClInclude Include="DateDeal.h" />
     <ClInclude Include="Interface.h" />
     <ClInclude Include="MyPoint.h" />
+    <ClInclude Include="scsacs.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FileOption.h" />

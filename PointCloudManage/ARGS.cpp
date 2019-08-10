@@ -10,3 +10,8 @@ ARGS::ARGS()
 ARGS::~ARGS()
 {
 }
+
+Surface ARGS::SelectSurface()
+{
+	return Surface();
+}

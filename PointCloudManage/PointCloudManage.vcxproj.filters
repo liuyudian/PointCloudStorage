@@ -51,6 +51,9 @@
     <ClCompile Include="ARGS.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="scsacs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="PointCloudManage.h">
@@ -78,6 +81,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ARGS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scsacs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
