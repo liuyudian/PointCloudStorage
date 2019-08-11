@@ -1,4 +1,8 @@
 #include "ARGS.h"
+
+vector<pcl::PointXYZ> DeletFixedPoint(Surface surface, vector<pcl::PointXYZ> RPoint);
+double GetAngle(CEdge currentEdge, CEdge otherEdge);
+
 ARGS::ARGS()
 {
 }
@@ -59,8 +63,8 @@ vector<pcl::PointXYZ> ARGS::GetCandidate(CEdge currentEdge,CEdge frontEdge,CEdge
 double GetAngle(CEdge currentEdge,CEdge otherEdge)
 {
 	// 求两条线段夹角
-	double  len1= (otherEdge.startNode.x-currentEdge.startNode.x)*(other)
-
+	double  len1 = (otherEdge.startNode.x - currentEdge.startNode.x);
+	return len1;
 }
 // 固定点删除
 vector<pcl::PointXYZ> DeletFixedPoint(Surface surface,vector<pcl::PointXYZ> RPoint)
