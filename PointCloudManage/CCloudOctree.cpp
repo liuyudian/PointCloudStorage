@@ -25,7 +25,6 @@ vector<pcl::PointXYZ> CCloudOctree::GetField(float L, pcl::PointXYZ pn)
 	}
 	// 最小体素的边长
 	float resolution = 128.0f;
-
 	pcl::octree::OctreePointCloudSearch<pcl::PointXYZ> octree(resolution);
 
 	// 索引点

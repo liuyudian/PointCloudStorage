@@ -35,6 +35,7 @@ public:
     QPushButton *pushButton_4;
     QPushButton *pushButton_5;
     QPushButton *pushButtonGrid;
+    QPushButton *pushButton_3;
     QMenuBar *menuBar;
     QMenu *menu11;
     QToolBar *mainToolBar;
@@ -70,6 +71,9 @@ public:
         pushButtonGrid = new QPushButton(centralWidget);
         pushButtonGrid->setObjectName(QString::fromUtf8("pushButtonGrid"));
         pushButtonGrid->setGeometry(QRect(0, 370, 101, 81));
+        pushButton_3 = new QPushButton(centralWidget);
+        pushButton_3->setObjectName(QString::fromUtf8("pushButton_3"));
+        pushButton_3->setGeometry(QRect(0, 490, 93, 28));
         PointCloudManageClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(PointCloudManageClass);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
@@ -102,6 +106,7 @@ public:
         pushButton_4->setText(QApplication::translate("PointCloudManageClass", "\345\217\266\345\255\220\350\212\202\347\202\271", nullptr));
         pushButton_5->setText(QApplication::translate("PointCloudManageClass", "\344\270\211\350\247\222\347\275\221\346\240\274\345\211\226\345\210\206", nullptr));
         pushButtonGrid->setText(QApplication::translate("PointCloudManageClass", "\350\207\252\345\256\232\344\271\211\347\275\221\346\240\274\345\211\226\345\210\206", nullptr));
+        pushButton_3->setText(QApplication::translate("PointCloudManageClass", "\346\265\213\350\257\225", nullptr));
         menu11->setTitle(QApplication::translate("PointCloudManageClass", "\346\226\207\344\273\266", nullptr));
     } // retranslateUi
 

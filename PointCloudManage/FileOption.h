@@ -16,6 +16,7 @@
 #include"MyPoint.h"
 using namespace std;
 
+
 /*
 
 	点云的文件操作

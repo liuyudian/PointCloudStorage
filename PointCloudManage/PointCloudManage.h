@@ -34,7 +34,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
-
+using namespace std;
 
 
 typedef pcl::PointXYZRGBA PointT;
@@ -73,4 +73,5 @@ public slots:
 	void GetLeafShow();
 	void Triangulation();//三角网格剖分
 	void MeshGeneration();//自定义网格剖分
+	void Getzhongzi();//种子三角面片获取
 };

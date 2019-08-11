@@ -6,14 +6,29 @@ ARGS::ARGS()
 ARGS::~ARGS()
 {
 }
-
+// 选择种子三角面片
 Surface ARGS::SelectSurface()
 {
+	Surface a;
+	pcl::PointCloud<pcl::PointXYZ>::Ptr  cloud(new pcl::PointCloud<pcl::PointXYZ>);
+
+	pcl::io::loadPCDFile<pcl::PointXYZ>("bunny.pcd", *cloud);
+
+	if (pcl::io::loadPCDFile<pcl::PointXYZ>("bunny.pcd", *cloud) == -1)
+	{
+		std::cout << "Cloud reading failed。" << std::endl;
+		return a;
+	}
+	cloud->points.size();
+	std::cout << cloud->points.size() << std::endl;
+	int b = rand() % cloud->points.size();
+	std::cout << b << std::endl;
 	return Surface();
  }
 
   
-// 选择种子三角面片
+
+
 // 获取候选点集
 vector<pcl::PointXYZ> ARGS::GetCandidate(CEdge currentEdge,CEdge frontEdge,CEdge rearEdge, Surface surface)
 {
@@ -56,12 +71,12 @@ vector<pcl::PointXYZ> ARGS::GetCandidate(CEdge currentEdge,CEdge frontEdge,CEdge
 
 	return RPoint;
 }
-double GetAngle(CEdge currentEdge,CEdge otherEdge)
+/*double GetAngle(CEdge currentEdge,CEdge otherEdge)
 {
 	// 求两条线段夹角
-	double  len1= (otherEdge.startNode.x-currentEdge.startNode.x)*(other)
+	double  len1= (otherEdge.startNode.x-currentEdge.startNode.x)*(other);
 
-}
+}*/
 // 固定点删除
 vector<pcl::PointXYZ> DeletFixedPoint(Surface surface,vector<pcl::PointXYZ> RPoint)
 {

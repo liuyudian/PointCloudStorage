@@ -11,6 +11,7 @@
 #include <cmath>
 #include <algorithm>//注意要包含该头文件
 #include <vector>
+#include "ARGS.h"
 using namespace std;
 FileOption fo;
 
@@ -40,6 +41,7 @@ PointCloudManage::PointCloudManage(QWidget *parent):
 	connect(ui->pushButton_4, SIGNAL(clicked()), this, SLOT(GetLeafShow()));//另存为按钮
 	connect(ui->pushButton_5, SIGNAL(clicked()), this, SLOT(Triangulation()));//三角网格剖分
 	connect(ui->pushButtonGrid, SIGNAL(clicked()), this, SLOT(MeshGeneration()));//三角网格剖分																		  //connect(action11, SIGNAL(clicked()), this, SLOT(Triangulation()));
+	connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(Getzhongzi()));//种子三角面片获取
 }
 
 // 自定义网格剖分
@@ -55,6 +57,12 @@ void PointCloudManage::MeshGeneration()
 		std::cout << "Cloud reading failed。" << std::endl;
 		return;
 	}
+}
+//种子三角面片获取
+void PointCloudManage::Getzhongzi()
+{
+	ARGS a;
+	a.SelectSurface();
 }
 
 
