@@ -44,4 +44,5 @@ bool Surface::isWithin(pcl::PointXYZ p)
 	/*return  (bx - ax) * (y - ay) > (by - ay) * (x - ax) &&
 		(cx - bx) * (y - by) > (cy - by) * (x - bx) &&
 		(ax - cx) * (y - cy) > (ay - cy) * (x - cx) ? false : true;*/
+	return false;
 }

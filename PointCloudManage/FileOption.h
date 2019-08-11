@@ -13,8 +13,7 @@
 #include <sstream>
 #include <iostream>
 #include <map>
-#include"MyPoint.h"
-using namespace std;
+#include "MyPoint.h"
 
 
 /*
