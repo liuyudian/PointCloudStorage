@@ -13,6 +13,10 @@ CCloudOctree::~CCloudOctree()
 // 获取领域
 vector<pcl::PointXYZ> CCloudOctree::GetField(float L, pcl::PointXYZ pn)
 {
+	L = 10;
+	pn.x = -28.218;
+	pn.y = -7.98492;
+	pn.z = 0.161011;
 	// 获取领域点集
 	vector<pcl::PointXYZ>_vectorPointNode;
 	pcl::PointCloud<pcl::PointXYZ>::Ptr  cloud(new pcl::PointCloud<pcl::PointXYZ>);
@@ -28,6 +32,10 @@ vector<pcl::PointXYZ> CCloudOctree::GetField(float L, pcl::PointXYZ pn)
 	float resolution = 128.0f;
 	pcl::octree::OctreePointCloudSearch<pcl::PointXYZ> octree(resolution);
 
+	octree.setInputCloud(cloud);
+	// 从输入点云构建八叉树
+
+	octree.addPointsFromInputCloud();
 	// 索引点
 
 	std::vector<int> pointIdxRadiusSearch;
