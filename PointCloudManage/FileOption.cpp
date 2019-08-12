@@ -108,7 +108,7 @@ string FileOption::AscToPcd()
 
 
 //把划分好的三角面片另存为.ply文件
-/*void FileOption::SaveAsPLY(pcl::PointCloud<pcl::PointXYZ>::Ptr cloudTriangles,pcl::PolygonMesh triangles)
+void FileOption::SaveAsPLY(pcl::PointCloud<pcl::PointXYZ>::Ptr cloudTriangles,pcl::PolygonMesh triangles)
 {
 	string fileName = "bunny.ply";
 	ofstream of(fileName.c_str());
@@ -137,7 +137,7 @@ string FileOption::AscToPcd()
 	{
 		of << 3 << " " << triangles.polygons[it].vertices[0] << " " << triangles.polygons[it].vertices[1] << " " << triangles.polygons[it].vertices[2] << endl;
 	}
-}*/
+}
  
 
 // 读取PCD文件
