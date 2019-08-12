@@ -6,6 +6,7 @@
 #include "Surface.h"
 #include "CCloudOctree.h"
 #include<vector>
+#include"Vector3.h"
 using namespace std;
 
 class ARGS
@@ -16,6 +17,7 @@ public:
 	vector<pcl::PointXYZ>candidatePointNode;
 	ARGS();
 	~ARGS();
+	//获取两点之间的距离
 
 	// 选择种子三角片
 	Surface SelectSurface();
