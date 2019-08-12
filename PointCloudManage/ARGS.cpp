@@ -117,10 +117,10 @@ vector<pcl::PointXYZ> ARGS::GetCandidate(CEdge currentEdge,CEdge frontEdge,CEdge
 	}
 	// 边角度约束间化
 	// 求 活动边之前以及之后的边与活动边的夹角
-
-
 	return RPoint;
 }
+
+// 求角度
 double GetAngle(CEdge currentEdge,CEdge otherEdge)
 {
 	// 求两条线段夹角
