@@ -90,14 +90,13 @@ int GetPointLineRelation(pcl::PointXYZ point,CEdge currentEdge)
 	double len_ab= sqrt(pow((pointa.x - pointb.x), 2.0) + pow((pointa.y - pointb.y), 2.0) + pow((pointa.z - pointb.z), 2.0));
 	
 	double len_as = sqrt(pow((pointa.x - point.x), 2.0) + pow((pointa.y - point.y), 2.0) + pow((pointa.z - point.z), 2.0));
-	double len_bs = sqrt(pow((point.x - pointb.x), 2.0) + pow((point.y - pointb.y), 2.0) + pow((point.z - pointb.z), 2.0));h
-
-		原文链接：https ://blog.csdn.net/liangsongjun/article/details/82051424
+	double len_bs = sqrt(pow((point.x - pointb.x), 2.0) + pow((point.y - pointb.y), 2.0) + pow((point.z - pointb.z), 2.0));
+	return 0;
 }
 //三维空间中，判断点是否在三角形内
 bool isInTrigon(pcl::PointXYZ point, Surface surface)
 {
-
+	return false;
 
 }
 // 求与活动边之前的边的角度
