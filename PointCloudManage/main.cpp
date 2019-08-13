@@ -12,10 +12,10 @@ int main(int argc, char *argv[])
 	//f.AscToPcd();
 	//f.ReadPcd();
 	//ui.pushButton->setText(tr("(hello)"));
-	/*CCloudOctree cld;
-	float L = 0;
-	pcl::PointXYZ pn;
-	cld.GetField( L,  pn);*/
+	//CCloudOctree cld;
+	//float L = 0;
+	//pcl::PointXYZ pn;
+	//cld.GetField( L,  pn);
 	QApplication a(argc, argv);
 	PointCloudManage w;
 	w.show();

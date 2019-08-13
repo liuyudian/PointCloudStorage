@@ -136,9 +136,9 @@ void PointCloudManage::GetLeafShow()
 
 	pcl::PointCloud<pcl::PointXYZ>::Ptr  cloud1(new pcl::PointCloud<pcl::PointXYZ>);
 
-	pcl::io::loadPCDFile<pcl::PointXYZ>("bunny.pcd", *cloud1);
+	pcl::io::loadPCDFile<pcl::PointXYZ>("bunny1.pcd", *cloud1);
 
-	if (pcl::io::loadPCDFile<pcl::PointXYZ>("bunny.pcd", *cloud1) == -1)
+	if (pcl::io::loadPCDFile<pcl::PointXYZ>("bunny1.pcd", *cloud1) == -1)
 	{
 		std::cout << "Cloud reading failed。" << std::endl;
 		return;
@@ -147,10 +147,10 @@ void PointCloudManage::GetLeafShow()
 	map<int, vector<Eigen::Vector3f>>_bodyVoxel;
 
 	// 存储叶子节点
-	pcl::PointCloud<pcl::PointXYZ>::Ptr  cloudLeaf(new pcl::PointCloud<pcl::PointXYZ>);
+	//pcl::PointCloud<pcl::PointXYZ>::Ptr  cloudLeaf(new pcl::PointCloud<pcl::PointXYZ>);
 
 	// 最小体素的边长
-	float resolution = 128.0f;
+	float resolution = 0.015f;
 
 	pcl::octree::OctreePointCloudSearch<pcl::PointXYZ> octree(resolution);
 
@@ -163,79 +163,42 @@ void PointCloudManage::GetLeafShow()
 	
 	pcl::PointXYZ searchPoint;
 
-	int depth = 5;
+	int depth = octree.getTreeDepth();
 	int countVoxel = 0;
 	// 求出体素边界
+
+	int idString = 0;
 	for (auto it = octree.begin(depth);it != octree.end();++it)
 	{
-		Eigen::Vector3f  voxel_min, voxel_max;
-		octree.getVoxelBounds(it, voxel_min, voxel_min);
-		vector<Eigen::Vector3f> list;
-		list.push_back(voxel_min);
-		list.push_back(voxel_max);
-		_bodyVoxel.insert(pair<int, vector<Eigen::Vector3f>>(countVoxel, list));
-		std::cout <<"深度为8的体素的最小值： "<<   voxel_min.x()<<" " << voxel_min.y()<<" " << voxel_min.z() <<std:: endl;
-		std::cout << "深度为8的体素的最大值： " << voxel_max.x() << " " << voxel_max.y() << " " << voxel_max.z() <<std:: endl;
-		std::cout << std::endl;
-		countVoxel++;
+		if (it.isLeafNode())
+		{
+			Eigen::Vector3f  voxel_min, voxel_max;
+			octree.getVoxelBounds(it, voxel_min, voxel_max);
+			vector<Eigen::Vector3f> list;
+			list.push_back(voxel_min);
+			list.push_back(voxel_max);
+			_bodyVoxel.insert(pair<int, vector<Eigen::Vector3f>>(countVoxel, list));
+			std::cout << "最小值： " << voxel_min.x() << " " << voxel_min.y() << " " << voxel_min.z() << std::endl;
+			std::cout << "最大值： " << voxel_max.x() << " " << voxel_max.y() << " " << voxel_max.z() << std::endl;
+			std::cout << std::endl;
+			countVoxel++;
+		}
 	}
-	pcl::visualization::PCLVisualizer viewer("3D Bunny Single Range rendering");
-	viewer.setBackgroundColor(0, 1, 0);
-	map<MaxAndMin, int>_mapMaxMin;
-	// 画立方体
-	std::cout << "去重前的极值个数： " << countVoxel << std::endl;
-	int countll=0;
+	// 画图
+	vector<Eigen::Vector3f> list;
+	Eigen::Vector3f  voxel_min, voxel_max;
+	countLeaf = 0;
 	for (auto it = _bodyVoxel.begin();it != _bodyVoxel.end();it++)
 	{
-		vector<Eigen::Vector3f> list = it->second;
-		MaxAndMin mam(list[0], list[1]);
-		 auto itt=_mapMaxMin.insert(pair<MaxAndMin, int>(mam, 0));
-		 if (itt.second)
-		 {
-			 std::cout << "深度为8的体素的最小值： " << list[0].x() << " " << list[0].y() << " " << list[0].z() << std::endl;
-			 //  addCube (float x_min, float x_max, float y_min, float y_max, float z_min, float z_max,
-	         //  double r = 1.0, double g = 1.0, double b = 1.0, const std::strings&id = "cube", int viewport = 0);
-			  viewer.addCube(list[1].x(), list[0].x(), list[1].y(), list[0].y(), list[1].z(), list[0].z(), 255, 0, 0, "cube"+ countll, 0);
-			 countll++;
-		 }
+		list = it->second;
+		voxel_min = list[0];
+		voxel_max = list[1];
+		viewer->addCube(voxel_min.x(), voxel_max.x(), voxel_min.y(), voxel_max.y(), voxel_min.z(), voxel_max.z(), 1, 0, 0, std::to_string(countLeaf));
+		countLeaf++;
 	}
 	std::cout << "**********叶子节点个数********" << octree.getLeafCount() << std::endl;
 	std::cout << "叶子节点个数:  " << countLeaf << std::endl;
 	// 对叶子节点容器初始化
-
-	// 指定半径，第几个点
-	float radius = 10;
-
-	// 求节点的r领域内的点
-	int index = 0;
-	auto it = fo._mapPoint.find(index);
-
-	if (it != fo._mapPoint.end())
-	{
-		searchPoint.x = it->second.x;
-		searchPoint.y = it->second.y;
-		searchPoint.z = it->second.z;
-	}
-
-	std::cout << " Neighbors within radius search at " << searchPoint.x
-		<< " " << searchPoint.y
-		<< " " << searchPoint.z
-		<< ") with radius=" << radius << std::endl;
-
-	std::vector<int> pointIdxRadiusSearch;
-	std::vector<float> pointRadiusSquaredDistance;
-
-	// 随机生成的某个顶点在空间半径r范围内的领域点
-	if (octree.radiusSearch(searchPoint, radius, pointIdxRadiusSearch, pointRadiusSquaredDistance) > 0)
-	{
-		for (size_t i = 0; i < pointIdxRadiusSearch.size(); ++i)
-			// 搜索点的坐标
-			std::cout << "    " << cloud->points[pointIdxRadiusSearch[i]].x
-			<< " " << cloud->points[pointIdxRadiusSearch[i]].y
-			<< " " << cloud->points[pointIdxRadiusSearch[i]].z
-			// 下标点与搜索点的平方距离
-			<< " (squared distance: " << pointRadiusSquaredDistance[i] << ")" << std::endl;
-	}
 }
 
 // 按钮响应事件测试,打开文件
@@ -280,15 +243,6 @@ void PointCloudManage::VTK_Show(string s)
 	std::cout <<"宽："<< cloud->width << std::endl;
 	std::cout <<"高："<< cloud->height<<std::endl;
 	viewer->updatePointCloud(cloud, "cloud");
-	ui->qvtkWidget->update();
-	// 查找叶子节点
-	 GetLeaf(cloud);
-}
-
-// 获取叶子节点
-void GetLeaf(pcl::PointCloud<pcl::PointXYZ>::Ptr  cloud)
-{
-	
 }
 
 //三角网格剖分
@@ -339,7 +293,7 @@ void PointCloudManage::Triangulation()
 	std::vector<int> states = gp3.getPointStates();
 	//cout << parts.size << endl;
 	//显示结果图
-	boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
+	//boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
 	viewer->setBackgroundColor(0,0,0);
 	viewer->addPolygonMesh(triangles, "my");//设置显示的网格
 	viewer->initCameraParameters();
@@ -349,7 +303,8 @@ void PointCloudManage::Triangulation()
 		viewer->spinOnce(100);
 		boost::this_thread::sleep(boost::posix_time::microseconds(100000));
 	}
-	//viewer->updatePointCloud(cloudTriangles, "cloud");
+	// vtk显示
+	viewer->updatePointCloud(cloudTriangles, "cloud");
 	//ui->qvtkWidget->update();
 }
 
