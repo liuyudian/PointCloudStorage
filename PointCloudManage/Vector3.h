@@ -6,7 +6,7 @@ class Vector3
 {
 public:
 	float x, y, z;
-	float r;
+	float circler;
 	Vector3() {};
 	Vector3(const Vector3 &a) :x(a.x), y(a.y), z(a.z) {};
 	Vector3(float _x, float _y, float _z) :x(_x), y(_y), z(_z) {};
@@ -132,8 +132,9 @@ inline Vector3 crossProduct(const Vector3&a, const Vector3 &b)
 	);
 }
 //计算三角形的外接圆的圆心和半径
-inline int solveCenterPointOfCircle(std::vector<Vector3> pt, Vector3 cirlepoint)
+inline float solveCenterPointOfCircle(std::vector<Vector3> pt, Vector3 cirlepoint)
 {
+	
 	double a1, b1, c1, d1;
 	double a2, b2, c2, d2;
 	double a3, b3, c3, d3;
@@ -167,13 +168,13 @@ inline int solveCenterPointOfCircle(std::vector<Vector3> pt, Vector3 cirlepoint)
 
 	float r = 0.0;
 	r = sqrt((x1 - x)*(x1 - x) + (y1 - y)*(y1 - y) + (z1 - z)*(z1 - z));
-	//r = sqrt((x2 - x)*(x2 - x) + (y2 - y)*(y2 - y) + (z2 - z)*(z2 - z));
-	//r = sqrt((x3 - x)*(x3 - x) + (y3 - y)*(y3 - y) + (z3 - z)*(z3 - z));
+	r = sqrt((x2 - x)*(x2 - x) + (y2 - y)*(y2 - y) + (z2 - z)*(z2 - z));
+	r = sqrt((x3 - x)*(x3 - x) + (y3 - y)*(y3 - y) + (z3 - z)*(z3 - z));
 	cirlepoint.x = x;
 	cirlepoint.y = y;
 	cirlepoint.z = z;
-	cirlepoint.r = r;
-	return 0;
+	cirlepoint.circler = r;
+	return r;
 
 }
 
