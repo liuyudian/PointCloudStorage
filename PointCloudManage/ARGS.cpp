@@ -51,9 +51,9 @@ Surface ARGS::SelectSurface()
 	vector<pcl::PointXYZ> neighborpoints;//r半径内的邻点集
 	pcl::PointCloud<pcl::PointXYZ>::Ptr  cloud(new pcl::PointCloud<pcl::PointXYZ>);
 
-	pcl::io::loadPCDFile<pcl::PointXYZ>("bunny.pcd", *cloud);
+	pcl::io::loadPCDFile<pcl::PointXYZ>("plane.pcd", *cloud);
 
-	if (pcl::io::loadPCDFile<pcl::PointXYZ>("bunny.pcd", *cloud) == -1)
+	if (pcl::io::loadPCDFile<pcl::PointXYZ>("plane.pcd", *cloud) == -1)
 	{
 		std::cout << "Cloud reading failed。" << std::endl;
 		return a;
@@ -167,7 +167,10 @@ Surface ARGS::SelectSurface()
 		break;
 	} while (1);
 	std::cout << vector3.x << " " << vector3.y << " " << vector3.z << std::endl;
+	a.p0 = orginsurface[0];
 	cedge.startNode = orginsurface[0];
+	a.p1 = orginsurface[1];
+	a.p2 = orginsurface[2];
 	cedge.endNode= orginsurface[1];
 	a.edge1 = cedge;
 	cedge.startNode = orginsurface[1];
@@ -179,8 +182,8 @@ Surface ARGS::SelectSurface()
 
 	return a;
  }
-// 获取候选点集
-vector<pcl::PointXYZ> ARGS::GetCandidate(CEdge currentEdge,Surface surface)
+// 获取候选点集以及查找最佳点
+pcl::PointXYZ ARGS::GetCandidate(CEdge currentEdge,Surface surface)
 {
 	// step1 查找活动边的最近邻点集
 	CCloudOctree CCO;
@@ -215,7 +218,9 @@ vector<pcl::PointXYZ> ARGS::GetCandidate(CEdge currentEdge,Surface surface)
 	// 计算代价并排序
 	GetAngleMaxAndMin(RPoint,currentEdge);
 
-	return RPoint;
+	auto it = ConstMap.begin();
+	pcl::PointXYZ bestPoint = it->second;
+	return bestPoint;
 }
 // 计算候选点集所构成的三角片的角度以及周长代价
 void GetAngleMaxAndMin(vector<pcl::PointXYZ>RPoint,CEdge currentEdge)
@@ -442,24 +447,7 @@ vector<pcl::PointXYZ> DeletFixedPoint(Surface surface,vector<pcl::PointXYZ> RPoi
 	}
 	return NewRPoint;
 }
-// 添加代价
-vector<pcl::PointXYZ> ARGS::AddCost(Surface seedSurface)
-{
-	return vector<pcl::PointXYZ>();
-}
 // 获取最佳点
-vector<pcl::PointXYZ> ARGS::GetBestPointNode(vector<pcl::PointXYZ> candidatePointNode)
-{
-	// 添加代价，并排序
-
-	return vector<pcl::PointXYZ>();
-}
-// 法矢角度代价CostAngle1
-double GetConstAngle1()
-{
-	return 0;
-}
-// 计算法矢
 vector<double> getNormal(pcl::PointXYZ p0, pcl::PointXYZ p1, pcl::PointXYZ p2)
 {
 	// 存放法矢
@@ -484,4 +472,35 @@ vector<double> getNormal(pcl::PointXYZ p0, pcl::PointXYZ p1, pcl::PointXYZ p2)
 		list.push_back(z / len);
 	}
 	return list;
+}
+void ARGS::GetARGS()
+{
+	// step 定义种子三角片 ,将SeedT的三条边加入到活性边中
+	int i = 0;
+	Surface seedT = SelectSurface();
+	 seedT.ToString();
+	listSurfce.push_back(seedT);
+	activeList.push_back(seedT.edge1);
+	listSurfce.push_back(seedT);
+	activeList.push_back(seedT.edge2);
+	listSurfce.push_back(seedT);
+	activeList.push_back(seedT.edge3);
+	while (!activeList.empty())
+	{
+		//筛选最佳点
+		CEdge currentEdge = activeList.front();
+		activeList.pop_front();
+		// 获取最佳点
+		pcl::PointXYZ point= GetCandidate(currentEdge, listSurfce[i]);
+		i++;
+		CEdge e1(currentEdge.endNode, point);
+		CEdge e2(point, currentEdge.startNode);
+		// 新建的三角片
+		Surface sf(e1, e2, currentEdge);
+		activeList.push_back(e1);
+		listSurfce.push_back(sf);
+		activeList.push_back(e2);
+		listSurfce.push_back(sf);
+	}
+
 }

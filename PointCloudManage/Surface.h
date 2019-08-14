@@ -4,6 +4,7 @@ class Surface
 {
 public:
 	Surface();
+	Surface(CEdge edge1,CEdge edge2,CEdge edge3);
 	~Surface();
 	// 点的信息
 	pcl::PointXYZ p0;
@@ -19,5 +20,13 @@ public:
 
 	// 判断点是否在三角面片中,???????平面和三维有何不同
 	bool isWithin(pcl::PointXYZ p);
+	void ToString()
+	{
+		std::cout <<" " <<p0.x <<" "<<p0.y<<" "<<p0.z<< std::endl;
+		std::cout << " " << p1.x << " " << p1.y << " " << p1.z << std::endl;
+		std::cout << " " << p2.x << " " << p2.y << " " << p2.z << std::endl;
+
+
+	}
 };
 
