@@ -7,6 +7,7 @@
 #include "CCloudOctree.h"
 #include<vector>
 #include"Vector3.h"
+#include<math.h>
 using namespace std;
 
 class ARGS
