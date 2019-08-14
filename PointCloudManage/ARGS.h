@@ -24,7 +24,7 @@ public:
 
 
 	// 获取候选点集,参数：活动边，,活动边之前的边，活动边之后的边，活动边所在的三角面片,点云数据
-	vector<pcl::PointXYZ> GetCandidate(CEdge currentEdge, CEdge frontEdge, CEdge rearEdge, Surface surface);
+	vector<pcl::PointXYZ> GetCandidate(CEdge currentEdge,Surface surface);
 
 	// 候选点添加代价
 	vector<pcl::PointXYZ> AddCost(Surface seedSurface);

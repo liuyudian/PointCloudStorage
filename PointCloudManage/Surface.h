@@ -5,7 +5,10 @@ class Surface
 public:
 	Surface();
 	~Surface();
-
+	// 点的信息
+	pcl::PointXYZ p0;
+	pcl::PointXYZ p1;
+	pcl::PointXYZ p2;
 	// 边的信息
 	CEdge edge1;
 	CEdge edge2;
