@@ -4,12 +4,37 @@
 vector<pcl::PointXYZ> DeletFixedPoint(Surface surface, vector<pcl::PointXYZ> RPoint);
 double GetAngleFront(CEdge currentEdge, CEdge otherEdge);
 double GetAngleRear(CEdge currentEdge, CEdge otherEdge);
+vector<double> getNormal(pcl::PointXYZ p0, pcl::PointXYZ p1, pcl::PointXYZ p2);
+vector<pcl::PointXYZ> GetNewCandidatePoint(vector<pcl::PointXYZ>  RPoint, CEdge currentEdge, Surface surface);
+int GetPointLineRelation(pcl::PointXYZ point, CEdge currentEdge);
+void  GetAngleAndLen(pcl::PointXYZ point, CEdge currentEdge);
+void GetAngleMaxAndMin(vector<pcl::PointXYZ>RPoint, CEdge currentEdge);
+// 与当前活动边构成的备选三角片中的最大内角以及最小内角
+double Anglemax = 0;
+double Anglemin = 0;
+// 表示与当前活动边构建的三角片周长，Lenmax(最大)，Lenmin(最小)
+double Lenmax=0;
+double Lenmin=0;
+
+// 当前三角候选三角面片的周长
+vector<double>listLen;
+double currentLen = 0;
+// 当前候选三角面片的最大角度
+vector<double>listAngle;
+double currentAngle = 0;
+// 法矢代价
+vector<double>ConstAngle1;
+// 总的代价
+vector<double>Const;
+map<double, pcl::PointXYZ>ConstMap;
 ARGS::ARGS()
 {
+
 }
 
 ARGS::~ARGS()
 {
+
 }
 
 // 选择种子三角面片
@@ -26,9 +51,9 @@ Surface ARGS::SelectSurface()
 	vector<pcl::PointXYZ> neighborpoints;//r半径内的邻点集
 	pcl::PointCloud<pcl::PointXYZ>::Ptr  cloud(new pcl::PointCloud<pcl::PointXYZ>);
 
-	pcl::io::loadPCDFile<pcl::PointXYZ>("bunny.pcd", *cloud);
+	pcl::io::loadPCDFile<pcl::PointXYZ>("plane.pcd", *cloud);
 
-	if (pcl::io::loadPCDFile<pcl::PointXYZ>("bunny.pcd", *cloud) == -1)
+	if (pcl::io::loadPCDFile<pcl::PointXYZ>("plane.pcd", *cloud) == -1)
 	{
 		std::cout << "Cloud reading failed。" << std::endl;
 		return a;
@@ -142,7 +167,10 @@ Surface ARGS::SelectSurface()
 		break;
 	} while (1);
 	std::cout << vector3.x << " " << vector3.y << " " << vector3.z << std::endl;
+	a.p0 = orginsurface[0];
 	cedge.startNode = orginsurface[0];
+	a.p1 = orginsurface[1];
+	a.p2 = orginsurface[2];
 	cedge.endNode= orginsurface[1];
 	a.edge1 = cedge;
 	cedge.startNode = orginsurface[1];
@@ -154,20 +182,8 @@ Surface ARGS::SelectSurface()
 
 	return a;
  }
- 
- //候选三角形质量检测
-pcl::PointXYZ TriangleQuality(CEdge CurrentEdge,vector < pcl::PointXYZ> Nodelist)
-{
-	Surface currentTriangle;
-	do 
-	{
-
-	
-	} while (1);
-}
-
-// 获取候选点集
-vector<pcl::PointXYZ> ARGS::GetCandidate(CEdge currentEdge,CEdge frontEdge,CEdge rearEdge, Surface surface)
+// 获取候选点集以及查找最佳点
+pcl::PointXYZ ARGS::GetCandidate(CEdge currentEdge,Surface surface)
 {
 	// step1 查找活动边的最近邻点集
 	CCloudOctree CCO;
@@ -197,55 +213,178 @@ vector<pcl::PointXYZ> ARGS::GetCandidate(CEdge currentEdge,CEdge frontEdge,CEdge
 	CCloudOctree cco;
 	// 获取领域内的点集
 	RPoint = cco.GetField(L, centerPoint);
-	if (RPoint.size() == 0)
-	{
-		// 返回的时候需要判断候选点集是否为空
-		return RPoint;
-	}
-	// 边角度约束间化
-	// 求 活动边之前以及之后的边与活动边的夹角
-	double angleA=GetAngleFront(currentEdge, frontEdge);
-	double angleB =GetAngleRear(currentEdge, rearEdge);
+	// 优化候选点集,剔除大于120度的点
+	RPoint = GetNewCandidatePoint(RPoint, currentEdge, surface);
+	// 计算代价并排序
+	GetAngleMaxAndMin(RPoint,currentEdge);
 
-	if (angleB < 135)
-	{
-		// 影响区域的下边界，判断点是否在边的一侧，rearEdge为下边界
-		// A=y2-y1 B=x1-x2 C=x2*y1-x1*y2;
-		// 
-		double D = 0;
-		double A = rearEdge.endNode.y - rearEdge.startNode.y;
-		double B = rearEdge.startNode.x - rearEdge.endNode.x;
-		double C = rearEdge.endNode.x*rearEdge.startNode.y - rearEdge.startNode.x*rearEdge.endNode.y;
-		// 求领域
-		RPoint = CCO.GetField(L, centerPoint);
+	auto it = ConstMap.begin();
+	pcl::PointXYZ bestPoint = it->second;
+	return bestPoint;
+}
+// 计算候选点集所构成的三角片的角度以及周长代价
+void GetAngleMaxAndMin(vector<pcl::PointXYZ>RPoint,CEdge currentEdge)
+{
 
-		// 保留在边界内的点
-	}
-	if (angleA > 135)
+	// 求 MAX and Min 以及每个候选点的最大内角角度和周长
+	for (auto it = RPoint.begin();it != RPoint.end();it++)
 	{
-		// 计算领点集中的每个点与当前活动边两个端点所构建的矢量方向与活动边方向之间的夹角，角度大于135则 从候选点集中删除
+		GetAngleAndLen(*it, currentEdge);
 	}
-	return RPoint;
+
+	for (int i=0;i<listLen.size();i++)
+	{
+		// 法矢代价
+		double angle1 = sin(ConstAngle1[i]);
+
+		// 最大内角代价
+		double angle2 = abs((listAngle[i] - Anglemin) / (Anglemax - Anglemin));
+		// 边长代价
+		double ConstEdge = abs((listLen[i]-Lenmin)/(Lenmax-Lenmin));
+
+		double JoinCost = angle1 + angle2 + ConstEdge;
+		Const.push_back(JoinCost);
+		ConstMap.insert(pair<double, pcl::PointXYZ>(JoinCost, RPoint[i]));
+	}
+
+}
+// 获取角度以及边长的最值
+void  GetAngleAndLen(pcl::PointXYZ point, CEdge currentEdge)
+{
+	pcl::PointXYZ pointa = currentEdge.startNode;
+	pcl::PointXYZ pointb = currentEdge.endNode;
+
+	double len_ab = sqrt(pow((pointa.x - pointb.x), 2.0) + pow((pointa.y - pointb.y), 2.0) + pow((pointa.z - pointb.z), 2.0));
+
+	double len_as = sqrt(pow((pointa.x - point.x), 2.0) + pow((pointa.y - point.y), 2.0) + pow((pointa.z - point.z), 2.0));
+	double len_bs = sqrt(pow((point.x - pointb.x), 2.0) + pow((point.y - pointb.y), 2.0) + pow((point.z - pointb.z), 2.0));
+
+	// 周长
+     currentLen = len_ab + len_as + len_bs;
+	 listLen.push_back(currentLen);
+
+	double A = acos((len_ab*len_ab + len_as * len_as - len_bs * len_bs) / (2 * len_ab*len_as));
+
+	double B = acos((len_ab*len_ab + len_bs * len_bs - len_as * len_as) / (2 * len_ab*len_bs));
+
+	double S = acos((len_as*len_as + len_bs * len_bs - len_ab * len_ab) / (2 * len_as*len_bs));
+
+	
+	if (A > B)
+	{
+		if (A > S)
+		{
+			currentAngle = A;
+		}
+		else
+		{
+			currentAngle = S;
+		}
+	}
+	else
+	{
+		if (B > S)
+		{
+			currentAngle = B;
+		}
+		else
+		{
+			currentAngle = S;
+		}
+	}
+	listAngle.push_back(currentAngle);
+	if (currentLen > Lenmax)
+	{
+		Lenmax = currentLen;
+	}
+	if (currentLen < Lenmin)
+	{
+		Lenmin = currentLen;
+	}
+
+	if (currentAngle > Anglemax)
+	{
+		Anglemax = currentAngle;
+	}
+	if (currentAngle < Anglemin)
+	{
+		Anglemin = currentAngle;
+	}
+} 
+// 排除当前活动边左侧的点并排除点与活动边构成的三角片法矢与活动边三角片法矢之间的夹角，大于120度排除
+vector<pcl::PointXYZ> GetNewCandidatePoint(vector<pcl::PointXYZ>  RPoint, CEdge currentEdge,Surface surface)
+{
+	// 排除左侧的点
+	vector<pcl::PointXYZ>NewRPoint;
+	for (auto it = RPoint.begin();it != RPoint.end();it++)
+	{
+		pcl::PointXYZ point = *it;
+		int value=GetPointLineRelation(point, currentEdge);
+		if (value == 1)
+		{
+			NewRPoint.push_back(point);
+		}
+	}
+	// 法矢之间的夹角剔除大于120度的点
+	vector<pcl::PointXYZ>NewRPoint1;
+	for (auto it = NewRPoint.begin();it != NewRPoint.end();it++)
+	{
+		// 计算点与活动边之间的法矢
+		vector<double>list = getNormal(*it, currentEdge.startNode, currentEdge.endNode);
+		// 计算surface 的法矢
+		vector<double>listSurface = getNormal(surface.p0, surface.p1, surface.p2);
+	    // 计算法矢之间的夹角
+		double angle = acos((list[0] * listSurface[0] + list[1] * listSurface[1] + list[2] * listSurface[2]) / 
+			sqrt(list[0] * list[0] + list[1] * list[1] + list[2] * list[2])*sqrt(listSurface[0] * listSurface[0] + listSurface[1] * listSurface[1] + listSurface[2] * listSurface[2]));
+		if (angle < 120)
+		{
+			NewRPoint1.push_back(*it);
+			ConstAngle1.push_back(angle);
+		}
+	}
+	return NewRPoint1;
 }
 //三维空间中，判断点与直线的位置关系,0表示点在直线上，1
 int GetPointLineRelation(pcl::PointXYZ point,CEdge currentEdge)
 {
 	int value = 0;
-	pcl::PointXYZ pointa=currentEdge.startNode;
-	pcl::PointXYZ pointb=currentEdge.endNode;
+	pcl::PointXYZ pointa= currentEdge.startNode;
+	pcl::PointXYZ pointb= currentEdge.endNode;
 
 	double len_ab= sqrt(pow((pointa.x - pointb.x), 2.0) + pow((pointa.y - pointb.y), 2.0) + pow((pointa.z - pointb.z), 2.0));
 	
 	double len_as = sqrt(pow((pointa.x - point.x), 2.0) + pow((pointa.y - point.y), 2.0) + pow((pointa.z - point.z), 2.0));
 	double len_bs = sqrt(pow((point.x - pointb.x), 2.0) + pow((point.y - pointb.y), 2.0) + pow((point.z - pointb.z), 2.0));
-	return 0;
+	if (len_as > len_bs) {//1
+		if (len_as > len_ab) {
+			value = 1;
+		}
+		else {
+			value = 0;
+		}
+	}
+	else {//-1
+		if (len_bs > len_ab) {
+			value = -1;
+		}
+		else {
+			value = 0;
+		}
+	}
+	return value;
 }
 //三维空间中，判断点是否在三角形内
 bool isInTrigon(pcl::PointXYZ point, Surface surface)
 {
-	return false;
+	bool value = false;
+	pcl::PointXYZ pointa = surface.edge1.startNode;
+	pcl::PointXYZ pointb = surface.edge1.endNode;
+	pcl::PointXYZ pointc = surface.edge2.endNode;
 
+	return value;
+	// 点到直线的距离
 }
+
 // 求与活动边之前的边的角度
 double GetAngleFront(CEdge currentEdge,CEdge otherEdge)
 {
@@ -305,17 +444,63 @@ vector<pcl::PointXYZ> DeletFixedPoint(Surface surface,vector<pcl::PointXYZ> RPoi
 			NewRPoint.push_back(*it);
 		}
 		// 删除排除点
-		
 	}
 	return NewRPoint;
 }
-// 添加代价
-vector<pcl::PointXYZ> ARGS::AddCost(Surface seedSurface)
-{
-	return vector<pcl::PointXYZ>();
-}
 // 获取最佳点
-vector<pcl::PointXYZ> ARGS::GetBestPointNode(vector<pcl::PointXYZ> candidatePointNode)
+vector<double> getNormal(pcl::PointXYZ p0, pcl::PointXYZ p1, pcl::PointXYZ p2)
 {
-	return vector<pcl::PointXYZ>();
+	// 存放法矢
+	vector<double>list;
+	double v1x = p1.x - p0.x;
+	double v1y = p1.y - p0.y;
+	double v1z = p1.z - p0.z;
+	double v2x = p2.x - p1.x;
+	double v2y = p2.y - p1.y;
+	double v2z = p2.z - p1.z;
+	double x = v1y * v2z - v1z * v2y;
+	double y = v1z * v2x - v1x * v2z;
+	double z = v1x * v2y - v1y * v2x;
+	double len = sqrt(x*x + y * y + z * z);
+	if (len == 0)
+	{
+		return list;
+	}
+	else {
+		list.push_back(x / len);
+		list.push_back(y / len);
+		list.push_back(z / len);
+	}
+	return list;
+}
+void ARGS::GetARGS()
+{
+	// step 定义种子三角片 ,将SeedT的三条边加入到活性边中
+	int i = 0;
+	Surface seedT = SelectSurface();
+	 seedT.ToString();
+	listSurfce.push_back(seedT);
+	activeList.push_back(seedT.edge1);
+	listSurfce.push_back(seedT);
+	activeList.push_back(seedT.edge2);
+	listSurfce.push_back(seedT);
+	activeList.push_back(seedT.edge3);
+	while (!activeList.empty())
+	{
+		//筛选最佳点
+		CEdge currentEdge = activeList.front();
+		activeList.pop_front();
+		// 获取最佳点
+		pcl::PointXYZ point= GetCandidate(currentEdge, listSurfce[i]);
+		i++;
+		CEdge e1(currentEdge.endNode, point);
+		CEdge e2(point, currentEdge.startNode);
+		// 新建的三角片
+		Surface sf(e1, e2, currentEdge);
+		activeList.push_back(e1);
+		listSurfce.push_back(sf);
+		activeList.push_back(e2);
+		listSurfce.push_back(sf);
+	}
+
 }

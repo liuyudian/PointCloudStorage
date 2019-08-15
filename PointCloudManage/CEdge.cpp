@@ -6,6 +6,12 @@ CEdge::CEdge()
 {
 }
 
+CEdge::CEdge(pcl::PointXYZ a1, pcl::PointXYZ b1)
+{
+	this->startNode = a1;
+	this->endNode = b1;
+}
+
 
 CEdge::~CEdge()
 {

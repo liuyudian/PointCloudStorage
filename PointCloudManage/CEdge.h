@@ -4,6 +4,7 @@ class CEdge
 {
 public:
 	CEdge();
+	CEdge(pcl::PointXYZ a1, pcl::PointXYZ b1);
 	~CEdge();
 	pcl::PointXYZ startNode;
 	pcl::PointXYZ endNode;

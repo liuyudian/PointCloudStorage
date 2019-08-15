@@ -16,6 +16,10 @@ public:
 
 	// 特性
 	vector<pcl::PointXYZ>candidatePointNode;
+	// 活动边存储
+	list<CEdge>activeList;
+    // 存储三角面片
+	vector<Surface>listSurfce;
 	ARGS();
 	~ARGS();
 	//获取两点之间的距离
@@ -25,15 +29,9 @@ public:
 
 
 	// 获取候选点集,参数：活动边，,活动边之前的边，活动边之后的边，活动边所在的三角面片,点云数据
-	vector<pcl::PointXYZ> GetCandidate(CEdge currentEdge, CEdge frontEdge, CEdge rearEdge, Surface surface);
+	pcl::PointXYZ GetCandidate(CEdge currentEdge,Surface surface);
 
-	// 候选点添加代价
-	vector<pcl::PointXYZ> AddCost(Surface seedSurface);
-
-	// 最佳点筛选
-	vector<pcl::PointXYZ> GetBestPointNode(vector<pcl::PointXYZ> candidatePointNode);
-
-	//候选三角形质量检测
-	pcl::PointXYZ TriangleQuality(CEdge CurrentEdge,vector < pcl::PointXYZ> Nodelist );
+	// ARGS算法
+	void GetARGS();
 };
 
