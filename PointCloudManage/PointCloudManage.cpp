@@ -54,7 +54,7 @@ void PointCloudManage::MeshGeneration()
 
 	if (pcl::io::loadPCDFile<pcl::PointXYZ>("bunny.pcd", *cloud1) == -1)
 	{
-		std::cout << "Cloud reading failed221¡£" << std::endl;
+		std::cout << "Cloud reading failed¡£" << std::endl;
 		return;
 	}
 }
