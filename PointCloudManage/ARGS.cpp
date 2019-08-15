@@ -494,7 +494,7 @@ void ARGS::GetARGS()
 	pcl::PolygonMesh triangles;
 	int i = 0;
 	Surface seedT = SelectSurface();
-
+	std::cout << "ddsas" << endl;
 	boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
 	i = 0;
 	list.push_back(seedT);
