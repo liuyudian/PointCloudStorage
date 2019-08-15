@@ -29,3 +29,12 @@ bool CEdge::Isexist(pcl::PointXYZ p)
 	}
 	return false;
 }
+
+double CEdge::GetLen()
+{
+	pcl::PointXYZ pointa = startNode;
+	pcl::PointXYZ pointb = endNode;
+	double len_ab = 0;
+	 len_ab = sqrt(pow((pointa.x - pointb.x), 2.0) + pow((pointa.y - pointb.y), 2.0) + pow((pointa.z - pointb.z), 2.0));
+	return len_ab;
+}
