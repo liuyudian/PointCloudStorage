@@ -131,7 +131,7 @@ Surface ARGS::SelectSurface()
 		{
 			sign = 0;
 		}
-		for (int i=3;i<neighborpoints.size();i++) 
+		/*for (int i=3;i<neighborpoints.size();i++) 
 		{
 			neighborpoint.x = neighborpoints[i].x;
 			neighborpoint.y = neighborpoints[i].y;
@@ -162,11 +162,12 @@ Surface ARGS::SelectSurface()
 		if (sign == 3) 
 		{
 			continue;
-		}
+		}*/
 		
 		break;
 	} while (1);
 	std::cout << vector3.x << " " << vector3.y << " " << vector3.z << std::endl;
+	
 	a.p0 = orginsurface[0];
 	cedge.startNode = orginsurface[0];
 	a.p1 = orginsurface[1];
@@ -503,4 +504,65 @@ void ARGS::GetARGS()
 		listSurfce.push_back(sf);
 	}
 
+}
+
+vector<Surface> ARGS::Wanggehua()
+{
+	Surface Orgin,a;
+	pcl::PointXYZ bestpoint;
+	vector<Surface> surfacelist;
+	vector<CEdge> activelist;
+	CEdge fixededge,currentedge;
+	Orgin= SelectSurface();
+	activelist.push_back(Orgin.edge1);
+	activelist.push_back(Orgin.edge2);
+	activelist.push_back(Orgin.edge3);
+	surfacelist.push_back(Orgin);
+	if (Orgin.edge1.startNode.x == Orgin.edge2.endNode.x&&Orgin.edge1.startNode.y == Orgin.edge2.endNode.y&&Orgin.edge1.startNode.z == Orgin.edge2.endNode.z)
+	{
+		fixededge = Orgin.edge2;
+	}
+	if (Orgin.edge1.startNode.x == Orgin.edge3.endNode.x&&Orgin.edge1.startNode.y == Orgin.edge3.endNode.y&&Orgin.edge1.startNode.z == Orgin.edge3.endNode.z)
+	{
+		fixededge = Orgin.edge3;
+	}
+	currentedge = activelist[0];
+	int i = 0;
+	do
+	{
+		double angle = GetAngleFront(currentedge, fixededge);
+		if (angle < 20) 
+		{
+			CEdge newedge;
+			newedge.startNode = currentedge.endNode;
+			newedge.endNode = fixededge.endNode;
+			a.edge1 = newedge;
+			a.edge2 = currentedge;
+			a.edge3 = fixededge;
+			surfacelist.push_back(a);
+			activelist.erase(activelist.begin());
+			activelist.erase(activelist.end());
+			activelist.insert(activelist.begin(), newedge);
+			break;
+		}
+		bestpoint = GetCandidate(currentedge, surfacelist[i]);
+		CEdge edge1, edge2;
+		edge1.startNode = currentedge.startNode;
+		edge1.endNode = bestpoint;
+		edge2.startNode = bestpoint;
+		edge2.endNode = currentedge.endNode;
+		a.edge1 = edge1;
+		a.edge2 = currentedge;
+		a.edge3 = edge2;
+		surfacelist.push_back(a);
+		activelist.erase(activelist.begin());
+		activelist.insert(activelist.begin(), edge2);
+		activelist.insert(activelist.begin(), edge1);
+		currentedge = activelist[0];
+		i++;
+		
+	} while (1);
+	boost::shared_ptr<pcl::visualization::PCLVisualizer> view(new pcl::visualization::PCLVisualizer("test"));
+	view->addLine(surfacelist[0].edge1.startNode,surfacelist[0].edge1.endNode);
+	return surfacelist;
 }
