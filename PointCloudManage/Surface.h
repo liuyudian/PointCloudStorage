@@ -22,6 +22,7 @@ public:
 	bool isWithin(pcl::PointXYZ p);
 	void ToString()
 	{
+		std::cout<<"当前三角面片 "<<std::endl;
 		std::cout <<" " <<p0.x <<" "<<p0.y<<" "<<p0.z<< std::endl;
 		std::cout << " " << p1.x << " " << p1.y << " " << p1.z << std::endl;
 		std::cout << " " << p2.x << " " << p2.y << " " << p2.z << std::endl;

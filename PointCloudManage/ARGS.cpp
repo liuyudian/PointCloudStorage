@@ -16,6 +16,8 @@ double Anglemin = 0;
 double Lenmax=0;
 double Lenmin=0;
 
+int flag = 0;
+
 // 当前三角候选三角面片的周长
 vector<double>listLen;
 double currentLen = 0;
@@ -131,7 +133,7 @@ Surface ARGS::SelectSurface()
 		{
 			sign = 0;
 		}
-		/*for (int i=3;i<neighborpoints.size();i++) 
+		for (int i=3;i<neighborpoints.size();i++) 
 		{
 			neighborpoint.x = neighborpoints[i].x;
 			neighborpoint.y = neighborpoints[i].y;
@@ -162,12 +164,11 @@ Surface ARGS::SelectSurface()
 		if (sign == 3) 
 		{
 			continue;
-		}*/
+		}
 		
 		break;
 	} while (1);
 	std::cout << vector3.x << " " << vector3.y << " " << vector3.z << std::endl;
-	
 	a.p0 = orginsurface[0];
 	cedge.startNode = orginsurface[0];
 	a.p1 = orginsurface[1];
@@ -187,7 +188,6 @@ Surface ARGS::SelectSurface()
 pcl::PointXYZ ARGS::GetCandidate(CEdge currentEdge,Surface surface)
 {
 	// step1 查找活动边的最近邻点集
-	CCloudOctree CCO;
 	// 获取领域点
 	vector<pcl::PointXYZ>RPoint;
 	// 求R
@@ -200,7 +200,7 @@ pcl::PointXYZ ARGS::GetCandidate(CEdge currentEdge,Surface surface)
 	}
 	else
 	{
-		L = (surface.edge1.len + surface.edge2.len + surface.edge3.len)/3.0;
+		L = (surface.edge1.GetLen() + surface.edge2.GetLen() + surface.edge3.GetLen())/3.0;
 	}
 	// 求边的中心点
 
@@ -221,19 +221,26 @@ pcl::PointXYZ ARGS::GetCandidate(CEdge currentEdge,Surface surface)
 
 	auto it = ConstMap.begin();
 	pcl::PointXYZ bestPoint = it->second;
+	std::cout <<"bestX: " <<bestPoint.x <<"bestY: " <<bestPoint.y <<"bestZ: " <<bestPoint.z << std::endl;
 	return bestPoint;
 }
 // 计算候选点集所构成的三角片的角度以及周长代价
 void GetAngleMaxAndMin(vector<pcl::PointXYZ>RPoint,CEdge currentEdge)
 {
-
+	listLen.clear();
+	listAngle.clear();
 	// 求 MAX and Min 以及每个候选点的最大内角角度和周长
 	for (auto it = RPoint.begin();it != RPoint.end();it++)
 	{
 		GetAngleAndLen(*it, currentEdge);
 	}
-
-	for (int i=0;i<listLen.size();i++)
+	std::cout << "RPoint: " << RPoint.size() << "listLen: " << listLen.size() << "listAngle: " << listAngle.size() << "ConstAngle1: " << ConstAngle1.size() << std::endl;
+	if (RPoint.size() == 0)
+	{
+		flag = 1;
+		return;
+	}
+	for (int i=0;i<listLen.size()&&i<listAngle.size()&&i< ConstAngle1.size();i++)
 	{
 		// 法矢代价
 		double angle1 = sin(ConstAngle1[i]);
@@ -317,7 +324,7 @@ vector<pcl::PointXYZ> GetNewCandidatePoint(vector<pcl::PointXYZ>  RPoint, CEdge 
 {
 	// 排除左侧的点
 	vector<pcl::PointXYZ>NewRPoint;
-	for (auto it = RPoint.begin();it != RPoint.end();it++)
+	/*for (auto it = RPoint.begin();it != RPoint.end();it++)
 	{
 		pcl::PointXYZ point = *it;
 		int value=GetPointLineRelation(point, currentEdge);
@@ -325,23 +332,28 @@ vector<pcl::PointXYZ> GetNewCandidatePoint(vector<pcl::PointXYZ>  RPoint, CEdge 
 		{
 			NewRPoint.push_back(point);
 		}
-	}
+	}*/
 	// 法矢之间的夹角剔除大于120度的点
+	ConstAngle1.clear();
 	vector<pcl::PointXYZ>NewRPoint1;
-	for (auto it = NewRPoint.begin();it != NewRPoint.end();it++)
+	for (auto it = RPoint.begin();it != RPoint.end();it++)
 	{
 		// 计算点与活动边之间的法矢
 		vector<double>list = getNormal(*it, currentEdge.startNode, currentEdge.endNode);
 		// 计算surface 的法矢
 		vector<double>listSurface = getNormal(surface.p0, surface.p1, surface.p2);
 	    // 计算法矢之间的夹角
-		double angle = acos((list[0] * listSurface[0] + list[1] * listSurface[1] + list[2] * listSurface[2]) / 
-			sqrt(list[0] * list[0] + list[1] * list[1] + list[2] * list[2])*sqrt(listSurface[0] * listSurface[0] + listSurface[1] * listSurface[1] + listSurface[2] * listSurface[2]));
-		if (angle < 120)
+		if (list.size() != 0 && listSurface.size() != 0)
 		{
-			NewRPoint1.push_back(*it);
-			ConstAngle1.push_back(angle);
+			double angle = acos((list[0] * listSurface[0] + list[1] * listSurface[1] + list[2] * listSurface[2]) /
+				sqrt(list[0] * list[0] + list[1] * list[1] + list[2] * list[2])*sqrt(listSurface[0] * listSurface[0] + listSurface[1] * listSurface[1] + listSurface[2] * listSurface[2]));
+			if (angle < 120)
+			{
+				NewRPoint1.push_back(*it);
+				ConstAngle1.push_back(angle);
+			}
 		}
+		
 	}
 	return NewRPoint1;
 }
@@ -477,9 +489,11 @@ vector<double> getNormal(pcl::PointXYZ p0, pcl::PointXYZ p1, pcl::PointXYZ p2)
 void ARGS::GetARGS()
 {
 	// step 定义种子三角片 ,将SeedT的三条边加入到活性边中
+	vector<Surface>list;
 	int i = 0;
 	Surface seedT = SelectSurface();
-	 seedT.ToString();
+	list.push_back(seedT);
+	// seedT.ToString();
 	listSurfce.push_back(seedT);
 	activeList.push_back(seedT.edge1);
 	listSurfce.push_back(seedT);
@@ -488,81 +502,30 @@ void ARGS::GetARGS()
 	activeList.push_back(seedT.edge3);
 	while (!activeList.empty())
 	{
-		//筛选最佳点
+		// 筛选最佳点
 		CEdge currentEdge = activeList.front();
+		currentEdge.ToString();
 		activeList.pop_front();
+		listSurfce[i].ToString();
 		// 获取最佳点
 		pcl::PointXYZ point= GetCandidate(currentEdge, listSurfce[i]);
+		if (flag == 1)
+		{
+			break;
+		}
 		i++;
-		CEdge e1(currentEdge.endNode, point);
-		CEdge e2(point, currentEdge.startNode);
+		CEdge e1(currentEdge.startNode, point);
+		CEdge e2(point, currentEdge.endNode);
 		// 新建的三角片
 		Surface sf(e1, e2, currentEdge);
+		sf.p0 = currentEdge.startNode;
+		sf.p1 = point;
+		sf.p2 = currentEdge.endNode;
+		list.push_back(sf);
 		activeList.push_back(e1);
 		listSurfce.push_back(sf);
 		activeList.push_back(e2);
 		listSurfce.push_back(sf);
 	}
-
-}
-
-vector<Surface> ARGS::Wanggehua()
-{
-	Surface Orgin,a;
-	pcl::PointXYZ bestpoint;
-	vector<Surface> surfacelist;
-	vector<CEdge> activelist;
-	CEdge fixededge,currentedge;
-	Orgin= SelectSurface();
-	activelist.push_back(Orgin.edge1);
-	activelist.push_back(Orgin.edge2);
-	activelist.push_back(Orgin.edge3);
-	surfacelist.push_back(Orgin);
-	if (Orgin.edge1.startNode.x == Orgin.edge2.endNode.x&&Orgin.edge1.startNode.y == Orgin.edge2.endNode.y&&Orgin.edge1.startNode.z == Orgin.edge2.endNode.z)
-	{
-		fixededge = Orgin.edge2;
-	}
-	if (Orgin.edge1.startNode.x == Orgin.edge3.endNode.x&&Orgin.edge1.startNode.y == Orgin.edge3.endNode.y&&Orgin.edge1.startNode.z == Orgin.edge3.endNode.z)
-	{
-		fixededge = Orgin.edge3;
-	}
-	currentedge = activelist[0];
-	int i = 0;
-	do
-	{
-		double angle = GetAngleFront(currentedge, fixededge);
-		if (angle < 20) 
-		{
-			CEdge newedge;
-			newedge.startNode = currentedge.endNode;
-			newedge.endNode = fixededge.endNode;
-			a.edge1 = newedge;
-			a.edge2 = currentedge;
-			a.edge3 = fixededge;
-			surfacelist.push_back(a);
-			activelist.erase(activelist.begin());
-			activelist.erase(activelist.end());
-			activelist.insert(activelist.begin(), newedge);
-			break;
-		}
-		bestpoint = GetCandidate(currentedge, surfacelist[i]);
-		CEdge edge1, edge2;
-		edge1.startNode = currentedge.startNode;
-		edge1.endNode = bestpoint;
-		edge2.startNode = bestpoint;
-		edge2.endNode = currentedge.endNode;
-		a.edge1 = edge1;
-		a.edge2 = currentedge;
-		a.edge3 = edge2;
-		surfacelist.push_back(a);
-		activelist.erase(activelist.begin());
-		activelist.insert(activelist.begin(), edge2);
-		activelist.insert(activelist.begin(), edge1);
-		currentedge = activelist[0];
-		i++;
-		
-	} while (1);
-	boost::shared_ptr<pcl::visualization::PCLVisualizer> view(new pcl::visualization::PCLVisualizer("test"));
-	view->addLine(surfacelist[0].edge1.startNode,surfacelist[0].edge1.endNode);
-	return surfacelist;
+	std::cout << "三角面片个数：" << list.size() << endl;
 }
