@@ -496,8 +496,6 @@ void ARGS::GetARGS()
 	Surface seedT = SelectSurface();
 
 	boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
-
-
 	i = 0;
 	list.push_back(seedT);
 	// seedT.ToString();
