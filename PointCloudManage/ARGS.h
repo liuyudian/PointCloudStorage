@@ -33,5 +33,10 @@ public:
 
 	// ARGS算法
 	void GetARGS();
+
+	//点云网格化
+	vector<Surface> Wanggehua();
+
+
 };
 

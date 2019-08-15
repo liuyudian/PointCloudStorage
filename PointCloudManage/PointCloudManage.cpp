@@ -62,7 +62,7 @@ void PointCloudManage::MeshGeneration()
 void PointCloudManage::Getzhongzi()
 {
 	ARGS a;
-	a.GetARGS();
+	a.Wanggehua();
 }
 
 
@@ -305,6 +305,7 @@ void PointCloudManage::Triangulation()
 	}
 	// vtkÏÔÊ¾
 	viewer->updatePointCloud(cloudTriangles, "cloud");
+
 	//ui->qvtkWidget->update();
 }
 
