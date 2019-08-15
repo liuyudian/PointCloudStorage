@@ -490,8 +490,20 @@ void ARGS::GetARGS()
 {
 	// step 定义种子三角片 ,将SeedT的三条边加入到活性边中
 	vector<Surface>list;
+	pcl::PolygonMesh triangles;
 	int i = 0;
 	Surface seedT = SelectSurface();
+	boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
+
+	viewer->addLine(seedT.edge1.startNode, seedT.edge1.endNode, std::to_string(i));
+	i++;
+	viewer->addLine(seedT.edge2.startNode, seedT.edge2.endNode, std::to_string(i));
+	i++;
+	viewer->addLine(seedT.edge3.startNode, seedT.edge3.endNode, std::to_string(i));
+	i++;
+	return;
+
+	i = 0;
 	list.push_back(seedT);
 	// seedT.ToString();
 	listSurfce.push_back(seedT);
@@ -527,5 +539,16 @@ void ARGS::GetARGS()
 		activeList.push_back(e2);
 		listSurfce.push_back(sf);
 	}
-	std::cout << "三角面片个数：" << list.size() << endl;
+	std::cout << "三角面片 ：" << list.size() << endl;
+	 i = 0;
+	for (auto it = list.begin();it != list.end();it++)
+	{
+		Surface a = *it;
+		viewer->addLine(a.edge1.startNode, a.edge1.endNode, std::to_string(i));
+		i++;
+		viewer->addLine(a.edge2.startNode, a.edge2.endNode, std::to_string(i));
+		i++;
+		viewer->addLine(a.edge3.startNode, a.edge3.endNode, std::to_string(i));
+		i++;
+	}
 }
