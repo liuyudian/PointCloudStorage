@@ -532,6 +532,7 @@ void ARGS::GetARGS()
 		activeList.push_back(e2);
 		listSurfce.push_back(sf);
 	}
+
 	std::cout << "Èý½ÇÃæÆ¬ £º" << list.size() << endl;
 	 i = 0;
 	for (auto it = list.begin();it != list.end();it++)
