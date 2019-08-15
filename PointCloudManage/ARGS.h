@@ -32,5 +32,8 @@ public:
 
 	// 最佳点筛选
 	vector<pcl::PointXYZ> GetBestPointNode(vector<pcl::PointXYZ> candidatePointNode);
+
+	//候选三角形质量检测
+	pcl::PointXYZ TriangleQuality(CEdge CurrentEdge,vector < pcl::PointXYZ> Nodelist );
 };
 

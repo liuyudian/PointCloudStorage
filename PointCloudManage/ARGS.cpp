@@ -154,7 +154,17 @@ Surface ARGS::SelectSurface()
 
 	return a;
  }
+ 
+ //候选三角形质量检测
+pcl::PointXYZ TriangleQuality(CEdge CurrentEdge,vector < pcl::PointXYZ> Nodelist)
+{
+	Surface currentTriangle;
+	do 
+	{
 
+	
+	} while (1);
+}
 
 // 获取候选点集
 vector<pcl::PointXYZ> ARGS::GetCandidate(CEdge currentEdge,CEdge frontEdge,CEdge rearEdge, Surface surface)
