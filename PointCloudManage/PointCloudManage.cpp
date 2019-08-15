@@ -62,7 +62,7 @@ void PointCloudManage::MeshGeneration()
 void PointCloudManage::Getzhongzi()
 {
 	ARGS a;
-	a.Wanggehua();
+	a.GetARGS();
 }
 
 

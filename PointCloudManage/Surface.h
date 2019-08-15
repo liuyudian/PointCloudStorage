@@ -15,7 +15,7 @@ public:
 	CEdge edge2;
 	CEdge edge3;
 	// 三角面片的三角形性质 1 表示钝角， 0表示锐角
-	int angle;
+	int angle=0;
 	float GetMaxLen();
 
 	// 判断点是否在三角面片中,???????平面和三维有何不同
@@ -29,5 +29,6 @@ public:
 
 
 	}
+	void GetAngle();
 };
 

@@ -51,3 +51,49 @@ bool Surface::isWithin(pcl::PointXYZ p)
 		(ax - cx) * (y - cy) > (ay - cy) * (x - cx) ? false : true;*/
 	return false;
 }
+
+void Surface::GetAngle()
+{
+	double currentAngle = 0;
+	double len_ab = sqrt(pow((p0.x - p1.x), 2.0) + pow((p0.y - p1.y), 2.0) + pow((p0.z - p1.z), 2.0));
+
+	double len_as = sqrt(pow((p0.x - p2.x), 2.0) + pow((p0.y - p2.y), 2.0) + pow((p0.z - p2.z), 2.0));
+	double len_bs = sqrt(pow((p2.x - p1.x), 2.0) + pow((p2.y - p1.y), 2.0) + pow((p2.z - p1.z), 2.0));
+
+	// ÖÜ³¤
+
+	double A = acos((len_ab*len_ab + len_as * len_as - len_bs * len_bs) / (2 * len_ab*len_as));
+
+	double B = acos((len_ab*len_ab + len_bs * len_bs - len_as * len_as) / (2 * len_ab*len_bs));
+
+	double S = acos((len_as*len_as + len_bs * len_bs - len_ab * len_ab) / (2 * len_as*len_bs));
+
+
+	if (A > B)
+	{
+		if (A > S)
+		{
+			currentAngle = A;
+		}
+		else
+		{
+			currentAngle = S;
+		}
+	}
+	else
+	{
+		if (B > S)
+		{
+			currentAngle = B;
+		}
+		else
+		{
+			currentAngle = S;
+		}
+	}
+
+	if (currentAngle > 90)
+	{
+		this->angle = 1;
+	}
+}

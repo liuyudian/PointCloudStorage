@@ -193,6 +193,7 @@ pcl::PointXYZ ARGS::GetCandidate(CEdge currentEdge,Surface surface)
 	// 求R
 	float L = 0.0f;
 	// 等于1表示钝角
+	surface.GetAngle();
 	if (surface.angle == 1)
 	{
 		// 获取最长边长
@@ -493,15 +494,9 @@ void ARGS::GetARGS()
 	pcl::PolygonMesh triangles;
 	int i = 0;
 	Surface seedT = SelectSurface();
+
 	boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
 
-	viewer->addLine(seedT.edge1.startNode, seedT.edge1.endNode, std::to_string(i));
-	i++;
-	viewer->addLine(seedT.edge2.startNode, seedT.edge2.endNode, std::to_string(i));
-	i++;
-	viewer->addLine(seedT.edge3.startNode, seedT.edge3.endNode, std::to_string(i));
-	i++;
-	return;
 
 	i = 0;
 	list.push_back(seedT);
