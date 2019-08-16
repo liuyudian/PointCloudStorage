@@ -368,7 +368,7 @@ int GetPointLineRelation(pcl::PointXYZ point,CEdge currentEdge)
 	double len_ab= sqrt(pow((pointa.x - pointb.x), 2.0) + pow((pointa.y - pointb.y), 2.0) + pow((pointa.z - pointb.z), 2.0));
 	
 	double len_as = sqrt(pow((pointa.x - point.x), 2.0) + pow((pointa.y - point.y), 2.0) + pow((pointa.z - point.z), 2.0));
-	double len_bs = sqrt(pow((point.x - pointb.x), 2.0) + pow((point.y - pointb.y), 2.0) + pow((point.z - pointb.z), 2.0));
+	double ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----------------------------------------------------------------------------9+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++----------------------------------------------------------------------------------------------------------------------------------------------------------------++++- = sqrt(pow((point.x - pointb.x), 2.0) + pow((point.y - pointb.y), 2.0) + pow((point.z - pointb.z), 2.0));
 	if (len_as > len_bs) {//1
 		if (len_as > len_ab) {
 			value = 1;
@@ -550,11 +550,21 @@ void ARGS::GetARGS()
 vector<Surface> ARGS::Wanggehua()
 {
 	Surface Orgin, a;
+	boost::shared_ptr<pcl::visualization::PCLVisualizer> view(new pcl::visualization::PCLVisualizer("test"));
 	pcl::PointXYZ bestpoint;
 	vector<Surface> surfacelist;
 	vector<CEdge> activelist;
+	vector<CEdge> currentlist;
 	CEdge fixededge, currentedge;
 	Orgin = SelectSurface();
+	int i1 = 0;
+	int i = 0;
+	view->addLine(Orgin.edge1.startNode, Orgin.edge1.endNode, std::to_string(i1));
+	i1++;
+	view->addLine(Orgin.edge2.startNode, Orgin.edge2.endNode, std::to_string(i1));
+	i1++;
+	view->addLine(Orgin.edge3.startNode, Orgin.edge3.endNode, std::to_string(i1));
+	i1++;
 	activelist.push_back(Orgin.edge1);
 	activelist.push_back(Orgin.edge2);
 	activelist.push_back(Orgin.edge3);
@@ -568,11 +578,11 @@ vector<Surface> ARGS::Wanggehua()
 		fixededge = Orgin.edge3;
 	}
 	currentedge = activelist[0];
-	int i = 0;
+
 	do
 	{
 		double angle = GetAngleFront(currentedge, fixededge);
-		if (angle < 20)
+		/*if (angle < 20)
 		{
 			CEdge newedge;
 			newedge.startNode = currentedge.endNode;
@@ -585,25 +595,41 @@ vector<Surface> ARGS::Wanggehua()
 			activelist.erase(activelist.end());
 			activelist.insert(activelist.begin(), newedge);
 			break;
-		}
+		}*/
+		currentlist.push_back(currentedge);
+		currentedge.ToString();
 		bestpoint = GetCandidate(currentedge, surfacelist[i]);
-		CEdge edge1, edge2;
-		edge1.startNode = currentedge.startNode;
+		CEdge edge2(currentedge.endNode, bestpoint), edge1(bestpoint, currentedge.startNode);
+		/*edge1.startNode = currentedge.startNode;
 		edge1.endNode = bestpoint;
-		edge2.startNode = bestpoint;
-		edge2.endNode = currentedge.endNode;
+		edge2.startNode = currentedge.endNode;
+		edge2.endNode = bestpoint;*/
+
 		a.edge1 = edge1;
 		a.edge2 = currentedge;
 		a.edge3 = edge2;
+		a.p0 = currentedge.startNode;
+		a.p1 = currentedge.endNode;
+		a.p2 = bestpoint;
 		surfacelist.push_back(a);
 		activelist.erase(activelist.begin());
 		activelist.insert(activelist.begin(), edge2);
 		activelist.insert(activelist.begin(), edge1);
 		currentedge = activelist[0];
+	
+		//view->addLine(surfacelist[0].edge1.startNode, surfacelist[0].edge1.endNode, std::to_string(i));
+		if (i >1) break;
 		i++;
 
 	} while (1);
-	boost::shared_ptr<pcl::visualization::PCLVisualizer> view(new pcl::visualization::PCLVisualizer("test"));
-	view->addLine(surfacelist[0].edge1.startNode, surfacelist[0].edge1.endNode);
+	i = 0;
+	for (auto it = currentlist.begin(); it != currentlist.end(); it++)
+	{
+		CEdge a = *it;
+		view->addLine(a.startNode, a.endNode, std::to_string(i1));
+		i1++;
+		
+	}
+	
 	return surfacelist;
 }
