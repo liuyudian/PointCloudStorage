@@ -15,6 +15,7 @@ double Anglemin = 0;
 // 表示与当前活动边构建的三角片周长，Lenmax(最大)，Lenmin(最小)
 double Lenmax=0;
 double Lenmin=0;
+float PI = 3.141592654;
 int GetLineLocation(CEdge currentEdge, pcl::PointXYZ point);
 int flag = 0;
 
@@ -46,7 +47,7 @@ Surface ARGS::SelectSurface()
 	CEdge cedge;
 	Vector3 vector3,neighborpoint;
 	Vector3 m, n, q,normal1,normal2;
-	float PI = 3.141592654;
+
 	pcl::PointXYZ orginpoint;//搜索源点
 	vector<Vector3> orginsurface1;
 	vector<pcl::PointXYZ>orginsurface;//种子三角形
@@ -222,7 +223,7 @@ pcl::PointXYZ ARGS::GetCandidate(CEdge currentEdge,Surface surface)
 	// 删除活动边所对应的点
 
 	auto it = ConstMap.begin();
-	pcl::PointXYZ bestPoint = it->second;
+	pcl::PointXYZ bestPoint =it->second;
 	std::cout <<"bestX: " <<bestPoint.x <<"bestY: " <<bestPoint.y <<"bestZ: " <<bestPoint.z << std::endl;
 	return bestPoint;
 }
@@ -242,29 +243,29 @@ void GetAngleMaxAndMin(vector<pcl::PointXYZ>RPoint,CEdge currentEdge)
 		flag = 1;
 		return;
 	}
-	for (int i=0;i<listLen.size()&&i<listAngle.size()&&i< ConstAngle1.size();)
+	for (int i=0;i<listLen.size()&&i<listAngle.size();)
 	{
 		// 法矢代价
-		double angle1 = sin(ConstAngle1[i]);
+		//double angle1 = sin(ConstAngle1[i]);
 
 		// 最大内角代价
 		double angle2 = abs((listAngle[i] - Anglemin) / (Anglemax - Anglemin));
 		// 边长代价
 		double ConstEdge = abs((listLen[i]-Lenmin)/(Lenmax-Lenmin));
 
-		double JoinCost = angle1 + angle2 + ConstEdge;
-		if ((RPoint[i].x == currentEdge.startNode.x&&RPoint[i].y == currentEdge.startNode.y&&RPoint[i].z == currentEdge.startNode.z) ||
+		double JoinCost =  angle2 + ConstEdge;
+		/*if ((RPoint[i].x == currentEdge.startNode.x&&RPoint[i].y == currentEdge.startNode.y&&RPoint[i].z == currentEdge.startNode.z) ||
 			(RPoint[i].x == currentEdge.endNode.x&&RPoint[i].y == currentEdge.endNode.y&&RPoint[i].z == currentEdge.endNode.z))
 		{
 			i++;
 		}
 		else
-		{
+		{*/
 			Const.push_back(JoinCost);
 			ConstMap.insert(pair<double, pcl::PointXYZ>(JoinCost, RPoint[i]));
 			i++;
 
-		}
+		/*}*/
 	}
 
 }
@@ -334,21 +335,33 @@ void  GetAngleAndLen(pcl::PointXYZ point, CEdge currentEdge)
 // 排除当前活动边左侧的点并排除点与活动边构成的三角片法矢与活动边三角片法矢之间的夹角，大于120度排除
 vector<pcl::PointXYZ> GetNewCandidatePoint(vector<pcl::PointXYZ>  RPoint, CEdge currentEdge,Surface surface)
 {
+	// 根据法向量判断方向
 	// 排除左侧的点
 	vector<pcl::PointXYZ>NewRPoint;
-	/*for (auto it = RPoint.begin();it != RPoint.end();it++)
+	std::cout << "开始RPOINT : " << RPoint.size() << std::endl;
+	for (auto it = RPoint.begin();it != RPoint.end();it++)
 	{
 		pcl::PointXYZ point = *it;
-		int value= GetPointLineRelation(point,currentEdge);
-		if (value == 1)
+		// 新构建的三角形法矢要与活动边构成的三角形法矢属于不同侧
+		vector<double>list=getNormal(currentEdge.startNode, currentEdge.endNode, point);
+		vector<double>listSurface = getNormal(surface.p0, surface.p1, surface.p2);
+		if ((list.size() != 0) && (listSurface.size() != 0))
 		{
-			NewRPoint.push_back(point);
+			if (list[1] * listSurface[1] < 0)
+			{
+				NewRPoint.push_back(point);
+			}
 		}
-	}*/
+	
+		
+
+	}
+	std::cout << "结束RPOINT : " << NewRPoint.size() << std::endl;
+
 	// 法矢之间的夹角剔除大于120度的点
 	ConstAngle1.clear();
-	vector<pcl::PointXYZ>NewRPoint1;
-	for (auto it = RPoint.begin();it != RPoint.end();it++)
+	/*vector<pcl::PointXYZ>NewRPoint1;
+	for (auto it = NewRPoint.begin();it != NewRPoint.end();it++)
 	{
 		// 计算点与活动边之间的法矢
 		vector<double>list = getNormal(*it, currentEdge.startNode, currentEdge.endNode);
@@ -358,16 +371,16 @@ vector<pcl::PointXYZ> GetNewCandidatePoint(vector<pcl::PointXYZ>  RPoint, CEdge 
 		if (list.size() != 0 && listSurface.size() != 0)
 		{
 			double angle = acos((list[0] * listSurface[0] + list[1] * listSurface[1] + list[2] * listSurface[2]) /
-				sqrt(list[0] * list[0] + list[1] * list[1] + list[2] * list[2])*sqrt(listSurface[0] * listSurface[0] + listSurface[1] * listSurface[1] + listSurface[2] * listSurface[2]));
+				sqrt(list[0] * list[0] + list[1] * list[1] + list[2] * list[2])*sqrt(listSurface[0] * listSurface[0] + listSurface[1] * listSurface[1] + listSurface[2] * listSurface[2]))*180/PI;
 			if (angle < 120)
 			{
-				NewRPoint1.push_back(*it);
+				//NewRPoint1.push_back(*it);
 				ConstAngle1.push_back(angle);
 			}
 		}
 		
-	}
-	return NewRPoint1;
+	}*/
+	return NewRPoint;
 }
 //三维空间中，判断点与直线的位置关系,0表示点在直线上，1
 int GetPointLineRelation(pcl::PointXYZ point,CEdge currentEdge)
@@ -379,7 +392,7 @@ int GetPointLineRelation(pcl::PointXYZ point,CEdge currentEdge)
 	double len_ab= sqrt(pow((pointa.x - pointb.x), 2.0) + pow((pointa.y - pointb.y), 2.0) + pow((pointa.z - pointb.z), 2.0));
 	
 	double len_as = sqrt(pow((pointa.x - point.x), 2.0) + pow((pointa.y - point.y), 2.0) + pow((pointa.z - point.z), 2.0));
-	double ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----------------------------------------------------------------------------9+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++----------------------------------------------------------------------------------------------------------------------------------------------------------------++++- = sqrt(pow((point.x - pointb.x), 2.0) + pow((point.y - pointb.y), 2.0) + pow((point.z - pointb.z), 2.0));
+	double len_bs = sqrt(pow((point.x - pointb.x), 2.0) + pow((point.y - pointb.y), 2.0) + pow((point.z - pointb.z), 2.0));
 	if (len_as > len_bs) {//1
 		if (len_as > len_ab) {
 			value = 1;
@@ -564,6 +577,8 @@ void ARGS::GetARGS()
 			break;
 		}
 		i++;
+		if (i > 2)
+			break;
 		CEdge e1(currentEdge.startNode, point);
 		CEdge e2(point, currentEdge.endNode);
 		// 新建的三角片
@@ -669,7 +684,7 @@ vector<Surface> ARGS::Wanggehua()
 		currentedge = activelist[0];
 	
 		//view->addLine(surfacelist[0].edge1.startNode, surfacelist[0].edge1.endNode, std::to_string(i));
-		if (i >1) break;
+		if (i >2) break;
 		i++;
 
 	} while (1);

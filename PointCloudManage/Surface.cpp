@@ -52,6 +52,7 @@ bool Surface::isWithin(pcl::PointXYZ p)
 	return false;
 }
 
+
 void Surface::GetAngle()
 {
 	double currentAngle = 0;
@@ -96,4 +97,26 @@ void Surface::GetAngle()
 	{
 		this->angle = 1;
 	}
+}
+void Surface::Normal()
+{
+		// ´æ·Å·¨Ê¸
+		vector<double>list;
+		double v1x = p1.x - p0.x;
+		double v1y = p1.y - p0.y;
+		double v1z = p1.z - p0.z;
+		double v2x = p2.x - p1.x;
+		double v2y = p2.y - p1.y;
+		double v2z = p2.z - p1.z;
+		double x = v1y * v2z - v1z * v2y;
+		double y = v1z * v2x - v1x * v2z;
+		double z = v1x * v2y - v1y * v2x;
+		double len = sqrt(x*x + y * y + z * z);
+		if (len != 0)
+		{
+			list.push_back(x / len);
+			list.push_back(y / len);
+			list.push_back(z / len);
+		}
+
 }

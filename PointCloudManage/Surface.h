@@ -1,5 +1,7 @@
 #pragma once
 #include"CEdge.h"
+#include <vector>
+using namespace std;
 class Surface
 {
 public:
@@ -15,6 +17,8 @@ public:
 	CEdge edge2;
 	CEdge edge3;
 	// 三角面片的三角形性质 1 表示钝角， 0表示锐角
+	vector<double>list;
+
 	int angle=0;
 	float GetMaxLen();
 
@@ -26,9 +30,10 @@ public:
 		std::cout <<" " <<p0.x <<" "<<p0.y<<" "<<p0.z<< std::endl;
 		std::cout << " " << p1.x << " " << p1.y << " " << p1.z << std::endl;
 		std::cout << " " << p2.x << " " << p2.y << " " << p2.z << std::endl;
-
-
 	}
+
+	// 计算三角面片的法向量
 	void GetAngle();
+	void Normal();
 };
 
