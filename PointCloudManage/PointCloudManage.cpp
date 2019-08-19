@@ -62,7 +62,7 @@ void PointCloudManage::MeshGeneration()
 void PointCloudManage::Getzhongzi()
 {
 	ARGS a;
-	a.Wanggehua();
+	a.GetARGS();
 }
 
 
@@ -136,9 +136,9 @@ void PointCloudManage::GetLeafShow()
 
 	pcl::PointCloud<pcl::PointXYZ>::Ptr  cloud1(new pcl::PointCloud<pcl::PointXYZ>);
 
-	pcl::io::loadPCDFile<pcl::PointXYZ>("bunny1.pcd", *cloud1);
+	pcl::io::loadPCDFile<pcl::PointXYZ>("bunny.pcd", *cloud1);
 
-	if (pcl::io::loadPCDFile<pcl::PointXYZ>("bunny1.pcd", *cloud1) == -1)
+	if (pcl::io::loadPCDFile<pcl::PointXYZ>("bunny.pcd", *cloud1) == -1)
 	{
 		std::cout << "Cloud reading failed。" << std::endl;
 		return;
@@ -150,7 +150,7 @@ void PointCloudManage::GetLeafShow()
 	//pcl::PointCloud<pcl::PointXYZ>::Ptr  cloudLeaf(new pcl::PointCloud<pcl::PointXYZ>);
 
 	// 最小体素的边长
-	float resolution = 0.015f;
+	float resolution = 5.0f;
 
 	pcl::octree::OctreePointCloudSearch<pcl::PointXYZ> octree(resolution);
 
@@ -184,6 +184,8 @@ void PointCloudManage::GetLeafShow()
 			countVoxel++;
 		}
 	}
+	std::cout << "深度: " << depth << std::endl;
+
 	// 画图
 	vector<Eigen::Vector3f> list;
 	Eigen::Vector3f  voxel_min, voxel_max;
@@ -219,8 +221,9 @@ void PointCloudManage::ShowModel()
 //在vtk控件中显示点云
 void PointCloudManage::VTK_Show(string s)
 {
-	ui->pushButton3->setText(tr("()"));
+	//ui->pushButton3->setText(tr("()"));
 
+	// 数据读取
 	pcl::PointCloud<pcl::PointXYZ>::Ptr  cloud(new pcl::PointCloud<pcl::PointXYZ>);
 
 	pcl::io::loadPCDFile<pcl::PointXYZ>(s, *cloud);
