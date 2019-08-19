@@ -16,6 +16,9 @@ double Anglemin = 0;
 double Lenmax=0;
 double Lenmin=0;
 int GetLineLocation(CEdge currentEdge, pcl::PointXYZ point);
+float PI = 3.141592654;
+
+CEdge  GetLineLocation(Surface surface);
 int flag = 0;
 
 // 当前三角候选三角面片的周长
@@ -38,6 +41,8 @@ ARGS::~ARGS()
 {
 
 }
+// 判断点在直线的那一侧
+
 
 // 选择种子三角面片
 Surface ARGS::SelectSurface()
@@ -46,7 +51,6 @@ Surface ARGS::SelectSurface()
 	CEdge cedge;
 	Vector3 vector3,neighborpoint;
 	Vector3 m, n, q,normal1,normal2;
-	float PI = 3.141592654;
 	pcl::PointXYZ orginpoint;//搜索源点
 	vector<Vector3> orginsurface1;
 	vector<pcl::PointXYZ>orginsurface;//种子三角形
@@ -184,6 +188,30 @@ Surface ARGS::SelectSurface()
 
 	return a;
  }
+
+ //求两边夹角
+float Getangle(CEdge edge1, CEdge edge2) 
+{
+	Vector3 Cedge1, Cedge2,p,m;
+	Cedge1.x = edge1.startNode.x;
+	Cedge1.y = edge1.startNode.y;
+	Cedge1.z = edge1.startNode.z;
+	Cedge2.x = edge1.endNode.x;
+	Cedge2.y = edge1.endNode.y;
+	Cedge2.z = edge1.endNode.z;
+	p = Cedge2 - Cedge1;
+	Cedge1.x = edge2.startNode.x;
+	Cedge1.y = edge2.startNode.y;
+	Cedge1.z = edge2.startNode.z;
+	Cedge2.x = edge2.endNode.x;
+	Cedge2.y = edge2.endNode.y;
+	Cedge2.z = edge2.endNode.z;
+	m= Cedge2 - Cedge1;
+	float n = p * m;
+	float q = distance(p, m);
+	float angle= acos(n / q)*(180 / PI);
+	return angle;
+}
 // 获取候选点集以及查找最佳点
 pcl::PointXYZ ARGS::GetCandidate(CEdge currentEdge,Surface surface)
 {
@@ -220,10 +248,14 @@ pcl::PointXYZ ARGS::GetCandidate(CEdge currentEdge,Surface surface)
 	// 计算代价并排序
 	GetAngleMaxAndMin(RPoint,currentEdge);
 	// 删除活动边所对应的点
-
 	auto it = ConstMap.begin();
-	pcl::PointXYZ bestPoint = it->second;
-	std::cout <<"bestX: " <<bestPoint.x <<"bestY: " <<bestPoint.y <<"bestZ: " <<bestPoint.z << std::endl;
+	pcl::PointXYZ bestPoint;
+	if (it != ConstMap.end())
+	{
+		pcl::PointXYZ bestPoint = it->second;
+		std::cout << "bestX: " << bestPoint.x << "bestY: " << bestPoint.y << "bestZ: " << bestPoint.z << std::endl;
+	}
+
 	return bestPoint;
 }
 // 计算候选点集所构成的三角片的角度以及周长代价
@@ -245,14 +277,14 @@ void GetAngleMaxAndMin(vector<pcl::PointXYZ>RPoint,CEdge currentEdge)
 	for (int i=0;i<listLen.size()&&i<listAngle.size()&&i< ConstAngle1.size();)
 	{
 		// 法矢代价
-		double angle1 = sin(ConstAngle1[i]);
+		//double angle1 = sin(ConstAngle1[i]);
 
 		// 最大内角代价
 		double angle2 = abs((listAngle[i] - Anglemin) / (Anglemax - Anglemin));
 		// 边长代价
 		double ConstEdge = abs((listLen[i]-Lenmin)/(Lenmax-Lenmin));
 
-		double JoinCost = angle1 + angle2 + ConstEdge;
+		double JoinCost =  angle2 + ConstEdge;
 		if ((RPoint[i].x == currentEdge.startNode.x&&RPoint[i].y == currentEdge.startNode.y&&RPoint[i].z == currentEdge.startNode.z) ||
 			(RPoint[i].x == currentEdge.endNode.x&&RPoint[i].y == currentEdge.endNode.y&&RPoint[i].z == currentEdge.endNode.z))
 		{
@@ -266,7 +298,6 @@ void GetAngleMaxAndMin(vector<pcl::PointXYZ>RPoint,CEdge currentEdge)
 
 		}
 	}
-
 }
 // 获取角度以及边长的最值
 void  GetAngleAndLen(pcl::PointXYZ point, CEdge currentEdge)
@@ -336,19 +367,24 @@ vector<pcl::PointXYZ> GetNewCandidatePoint(vector<pcl::PointXYZ>  RPoint, CEdge 
 {
 	// 排除左侧的点
 	vector<pcl::PointXYZ>NewRPoint;
-	/*for (auto it = RPoint.begin();it != RPoint.end();it++)
+	for (auto it = RPoint.begin();it != RPoint.end();it++)
 	{
 		pcl::PointXYZ point = *it;
-		int value= GetPointLineRelation(point,currentEdge);
-		if (value == 1)
+		CEdge value=GetLineLocation(surface);
+		CEdge valuePoint(value.startNode, point);
+		double A = Getangle(value, valuePoint);
+		if (A >90)
 		{
+		  
 			NewRPoint.push_back(point);
 		}
-	}*/
+	}
+	// 排除在三角形里面的点
+
 	// 法矢之间的夹角剔除大于120度的点
-	ConstAngle1.clear();
+	/*ConstAngle1.clear();
 	vector<pcl::PointXYZ>NewRPoint1;
-	for (auto it = RPoint.begin();it != RPoint.end();it++)
+	for (auto it = NewRPoint.begin();it != NewRPoint.end();it++)
 	{
 		// 计算点与活动边之间的法矢
 		vector<double>list = getNormal(*it, currentEdge.startNode, currentEdge.endNode);
@@ -358,7 +394,7 @@ vector<pcl::PointXYZ> GetNewCandidatePoint(vector<pcl::PointXYZ>  RPoint, CEdge 
 		if (list.size() != 0 && listSurface.size() != 0)
 		{
 			double angle = acos((list[0] * listSurface[0] + list[1] * listSurface[1] + list[2] * listSurface[2]) /
-				sqrt(list[0] * list[0] + list[1] * list[1] + list[2] * list[2])*sqrt(listSurface[0] * listSurface[0] + listSurface[1] * listSurface[1] + listSurface[2] * listSurface[2]));
+				sqrt(list[0] * list[0] + list[1] * list[1] + list[2] * list[2])*sqrt(listSurface[0] * listSurface[0] + listSurface[1] * listSurface[1] + listSurface[2] * listSurface[2]))*180/PI;
 			if (angle < 120)
 			{
 				NewRPoint1.push_back(*it);
@@ -366,8 +402,8 @@ vector<pcl::PointXYZ> GetNewCandidatePoint(vector<pcl::PointXYZ>  RPoint, CEdge 
 			}
 		}
 		
-	}
-	return NewRPoint1;
+	}*/
+	return NewRPoint;
 }
 //三维空间中，判断点与直线的位置关系,0表示点在直线上，1
 int GetPointLineRelation(pcl::PointXYZ point,CEdge currentEdge)
@@ -379,7 +415,7 @@ int GetPointLineRelation(pcl::PointXYZ point,CEdge currentEdge)
 	double len_ab= sqrt(pow((pointa.x - pointb.x), 2.0) + pow((pointa.y - pointb.y), 2.0) + pow((pointa.z - pointb.z), 2.0));
 	
 	double len_as = sqrt(pow((pointa.x - point.x), 2.0) + pow((pointa.y - point.y), 2.0) + pow((pointa.z - point.z), 2.0));
-	double ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----------------------------------------------------------------------------9+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++----------------------------------------------------------------------------------------------------------------------------------------------------------------++++- = sqrt(pow((point.x - pointb.x), 2.0) + pow((point.y - pointb.y), 2.0) + pow((point.z - pointb.z), 2.0));
+	double len_bs = sqrt(pow((point.x - pointb.x), 2.0) + pow((point.y - pointb.y), 2.0) + pow((point.z - pointb.z), 2.0));
 	if (len_as > len_bs) {//1
 		if (len_as > len_ab) {
 			value = 1;
@@ -410,29 +446,21 @@ bool isInTrigon(pcl::PointXYZ point, Surface surface)
 	// 点到直线的距离
 }
 // 判断点在直线的哪一侧
-int GetLineLocation(CEdge currentEdge, pcl::PointXYZ point)
+CEdge  GetLineLocation(Surface surface)
 {
-	double D = 0;
-	double A = currentEdge.endNode.y - currentEdge.startNode.y;
-	double B= currentEdge.endNode.x - currentEdge.startNode.x;
-	double C = currentEdge.endNode.x*currentEdge.startNode.y - currentEdge.startNode.x*currentEdge.endNode.y;
-	D = A * point.x + B * point.y + C;
-// 右侧
-	if (D > 0)
-	{
-		flag = 1;
-	}
-	// 左侧
-	else if (D < 0)
-	{
-		flag = 0;
-	}
-	else
-	{
-		flag = -1;
-	}
-
-	return flag;
+	// 当前活动边斜率
+	
+	pcl::PointXYZ foot;
+	pcl::PointXYZ a = surface.p0;
+	pcl::PointXYZ b = surface.p1;
+	pcl::PointXYZ o = surface.p2;
+	double k1 = -((a.x-o.x)*(b.x-a.x)+(a.y-o.y)*(b.y-a.y)+(a.z-o.z)*(b.z-a.z))/
+		(pow(b.x-a.x,2)+pow(b.y-a.y,2)+pow(b.z-a.z,2));
+	foot.x = k1 * (b.x - a.x) + a.x;
+	foot.y = k1 * (b.y - a.y) + a.y;
+	foot.z = k1 * (b.z - a.z) + a.z;
+	CEdge e1(foot, o);
+	return e1;
 }
 // 求与活动边之前的边的角度
 double GetAngleFront(CEdge currentEdge,CEdge otherEdge)
@@ -452,7 +480,7 @@ double GetAngleFront(CEdge currentEdge,CEdge otherEdge)
 		(otherEdge.endNode.z - currentEdge.endNode.z)*(otherEdge.endNode.z - currentEdge.endNode.z));
 
 	// 求角度
-	double A = acos((l1*l1 + l2 * l2 - l3 * l3) / 2.0*l1*l2);
+	double A = acos((l1*l1 + l2 * l2 - l3 * l3) / 2.0*l1*l2)*(180 / PI);
 	return A;
 }
 
@@ -607,6 +635,7 @@ vector<Surface> ARGS::Wanggehua()
 	vector<CEdge> activelist;
 	vector<CEdge> currentlist;
 	CEdge fixededge, currentedge;
+
 	Orgin = SelectSurface();
 	int i1 = 0;
 	int i = 0;
@@ -667,15 +696,14 @@ vector<Surface> ARGS::Wanggehua()
 		activelist.insert(activelist.begin(), edge2);
 		activelist.insert(activelist.begin(), edge1);
 		currentedge = activelist[0];
-	
+		currentedge.ToString();
 		//view->addLine(surfacelist[0].edge1.startNode, surfacelist[0].edge1.endNode, std::to_string(i));
-		if (i >1) break;
+		if (i >3) break;
 		i++;
 
 	} while (1);
-	boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer(new pcl::visualization::PCLVisualizer("test"));
 	i = 0;
-	for (auto it = surfacelist.begin();it != surfacelist.end();it++)
+	/*for (auto it = surfacelist.begin();it != surfacelist.end();it++)
 	{
 		Surface a = *it;
 		viewer->addLine(a.edge1.startNode, a.edge1.endNode, std::to_string(i));
@@ -684,6 +712,11 @@ vector<Surface> ARGS::Wanggehua()
 		i++;
 		viewer->addLine(a.edge3.startNode, a.edge3.endNode, std::to_string(i));
 		i++;
-	}
+	}*/
+	for (auto it = currentlist.begin();it != currentlist.end();it++)
+   {
+	   view->addLine(it->startNode, it->endNode, std::to_string(i1));
+	   i1++;
+   }
 	return surfacelist;
 }
