@@ -577,7 +577,7 @@ void ARGS::GetARGS()
 			break;
 		}
 		i++;
-		if (i > 2)
+		if (i > 5)
 			break;
 		CEdge e1(currentEdge.startNode, point);
 		CEdge e2(point, currentEdge.endNode);
@@ -665,7 +665,19 @@ vector<Surface> ARGS::Wanggehua()
 		currentlist.push_back(currentedge);
 		currentedge.ToString();
 		bestpoint = GetCandidate(currentedge, surfacelist[i]);
-		CEdge edge2(currentedge.endNode, bestpoint), edge1(bestpoint, currentedge.startNode);
+		/*if (flag==1) 
+		{
+			if (activelist.size() == 0)break;
+			flag = 0;
+			pcl::PointXYZ temp;
+			temp = surfacelist[i].p0;
+			surfacelist[i].p0 = surfacelist[i].p2;
+			surfacelist[i].p2 = temp;
+			activelist.erase(activelist.begin());
+			currentedge = activelist[0];
+			continue;
+		}*/
+		CEdge edge2(currentedge.endNode, bestpoint), edge1(currentedge.startNode, bestpoint);
 		/*edge1.startNode = currentedge.startNode;
 		edge1.endNode = bestpoint;
 		edge2.startNode = currentedge.endNode;
@@ -675,8 +687,8 @@ vector<Surface> ARGS::Wanggehua()
 		a.edge2 = currentedge;
 		a.edge3 = edge2;
 		a.p0 = currentedge.startNode;
-		a.p1 = currentedge.endNode;
-		a.p2 = bestpoint;
+		a.p1 = bestpoint;
+		a.p2 = currentedge.endNode;
 		surfacelist.push_back(a);
 		activelist.erase(activelist.begin());
 		activelist.insert(activelist.begin(), edge2);
@@ -684,7 +696,7 @@ vector<Surface> ARGS::Wanggehua()
 		currentedge = activelist[0];
 	
 		//view->addLine(surfacelist[0].edge1.startNode, surfacelist[0].edge1.endNode, std::to_string(i));
-		if (i >2) break;
+		if (i >10) break;
 		i++;
 
 	} while (1);
