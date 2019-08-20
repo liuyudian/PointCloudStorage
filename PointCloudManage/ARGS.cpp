@@ -72,7 +72,7 @@ Surface ARGS::SelectSurface()
 	do {
 		int sign = 0;
 		srand(time(NULL));
-		int randnum = 1488;
+		int randnum =1128;
 		std::cout << randnum << std::endl;
 		//随机获取点云中的一个点
 		orginpoint = cloud->points[randnum];
@@ -112,8 +112,9 @@ Surface ARGS::SelectSurface()
 			continue;//如果共线，递归重新挑选原点；
 		}
 		//判断经过三角形三个顶点的圆球内是否包含邻点集中的其他点
-		float cirfc = solveCenterPointOfCircle(orginsurface1, vector3);
-		std::cout << vector3.x << " " << vector3.y << " " << vector3.z << " " << cirfc << std::endl;
+		Vector3 cirfc= solveCenterPointOfCircle(orginsurface1, vector3);
+		std::cout << cirfc.x << " " << cirfc.y << " " << cirfc.z << " " << cirfc .circler<< std::endl;
+		float r = distance(orginsurface1[0], cirfc);
 		map<float, pcl::PointXYZ>::iterator itr = neighborpoints.begin();
 		itr++;
 		for (itr; itr != neighborpoints.end(); itr++)
@@ -122,7 +123,7 @@ Surface ARGS::SelectSurface()
 			neighborpoint.y = itr->second.y;
 			neighborpoint.z = itr->second.z;
 			sign = 3;
-			if (cirfc <= distance(neighborpoint, vector3))
+			if (r >= distance(neighborpoint, cirfc))
 			{
 				orginsurface.clear();
 				orginsurface1.clear();
@@ -770,7 +771,7 @@ vector<Surface> ARGS::Wanggehua()
 		//currentedge = activelist[0];
 		// view->addLine(surfacelist[0].edge1.startNode, surfacelist[0].edge1.endNode, std::to_string(i));
 		i++;
-		if (i >5)
+		if (i >7)
 		{
 			break;
 		}
