@@ -72,13 +72,13 @@ Surface ARGS::SelectSurface()
 	do {
 		int sign = 0;
 		srand(time(NULL));
-		int randnum = rand() % cloud->points.size();
+		int randnum = 1488;
 		std::cout << randnum << std::endl;
 		//随机获取点云中的一个点
 		orginpoint = cloud->points[randnum];
 		//查到点领域内的邻点
 		CCloudOctree CCO;
-		neighborpoints = CCO.GetField1(cloud,r, orginpoint);
+		neighborpoints = CCO.GetField1(cloud,3, orginpoint);
 		std::cout << "领域点的大小 is :" << neighborpoints.size() << std::endl;
 
 		//向种子三角形中顺次加入两个点
@@ -770,10 +770,12 @@ vector<Surface> ARGS::Wanggehua()
 		//currentedge = activelist[0];
 		// view->addLine(surfacelist[0].edge1.startNode, surfacelist[0].edge1.endNode, std::to_string(i));
 		i++;
-		if (i >10)
+		if (i >5)
 		{
 			break;
 		}
+	
+	
 	} while (!active.empty());
 	i = 0;
 
