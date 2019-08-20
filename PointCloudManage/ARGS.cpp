@@ -1,5 +1,6 @@
 #include "ARGS.h"
 #include <cmath>
+#include <ctime>
 
 vector<pcl::PointXYZ> DeletFixedPoint(Surface surface, vector<pcl::PointXYZ> RPoint);
 double GetAngleFront(CEdge currentEdge, CEdge otherEdge);
@@ -51,7 +52,8 @@ Surface ARGS::SelectSurface()
 	pcl::PointXYZ orginpoint;//搜索源点
 	vector<Vector3> orginsurface1;
 	vector<pcl::PointXYZ>orginsurface;//种子三角形
-	vector<pcl::PointXYZ> neighborpoints;//r半径内的邻点集
+	//vector<pcl::PointXYZ> neighborpoints;//r半径内的邻点集
+	map<float, pcl::PointXYZ>neighborpoints;
 	pcl::PointCloud<pcl::PointXYZ>::Ptr  cloud(new pcl::PointCloud<pcl::PointXYZ>);
 
 	pcl::io::loadPCDFile<pcl::PointXYZ>("plane.pcd", *cloud);
@@ -69,6 +71,7 @@ Surface ARGS::SelectSurface()
 	std::cout << "r is :"<<r << std::endl;
 	do {
 		int sign = 0;
+		srand(time(NULL));
 		int randnum = rand() % cloud->points.size();
 		std::cout << randnum << std::endl;
 		//随机获取点云中的一个点
@@ -79,17 +82,15 @@ Surface ARGS::SelectSurface()
 		std::cout << "领域点的大小 is :" << neighborpoints.size() << std::endl;
 
 		//向种子三角形中顺次加入两个点
-		if (neighborpoints.size() > 3)
+		orginsurface.push_back(orginpoint);
+		if (neighborpoints.size() > 3) 
 		{
-			orginsurface.push_back(orginpoint);
-			orginsurface.push_back(neighborpoints[1]);
-			orginsurface.push_back(neighborpoints[2]);
+			auto it = neighborpoints.begin();
+			it++;
+			orginsurface.push_back(it->second);
+			it++;
+			orginsurface.push_back(it->second);
 		}
-		else
-		{
-			continue;
-		}
-
 		//判断三个点是否在一条直线上
 		for (vector<pcl::PointXYZ>::iterator it = orginsurface.begin(); it != orginsurface.end(); it++)
 		{
@@ -113,23 +114,28 @@ Surface ARGS::SelectSurface()
 		//判断经过三角形三个顶点的圆球内是否包含邻点集中的其他点
 		float cirfc = solveCenterPointOfCircle(orginsurface1, vector3);
 		std::cout << vector3.x << " " << vector3.y << " " << vector3.z << " " << cirfc << std::endl;
-		for (int i = 2; i < neighborpoints.size(); i++)
+		map<float, pcl::PointXYZ>::iterator itr = neighborpoints.begin();
+		itr++;
+		for (itr; itr != neighborpoints.end(); itr++)
 		{
-			neighborpoint.x = neighborpoints[i].x;
-			neighborpoint.y = neighborpoints[i].y;
-			neighborpoint.z = neighborpoints[i].z;
+			neighborpoint.x = itr->second.x;
+			neighborpoint.y = itr->second.y;
+			neighborpoint.z = itr->second.z;
+			sign = 3;
 			if (cirfc <= distance(neighborpoint, vector3))
 			{
 				orginsurface.clear();
 				orginsurface1.clear();
 				neighborpoints.clear();
 				sign = 1;
-				break;//如果点在三角形外接圆内，递归。
+				break;//如果点在三角形外接圆内。
 			}
+			
 		}
 		if (sign == 1)continue;
 		std::cout << "hello" << std::endl;
-		//判断邻点集的点是否在三角行面的同一侧
+		if (sign == 3)break;
+		/*//判断邻点集的点是否在三角行面的同一侧
 		m = orginsurface1[1] - orginsurface1[0];
 		n = orginsurface1[2] - orginsurface1[1];
 		normal1 = crossProduct(m, n);//三角形的法向量
@@ -182,7 +188,7 @@ Surface ARGS::SelectSurface()
 			continue;
 		}
 		
-		break;
+		break;*/
 	} while (1);
 	std::cout << vector3.x << " " << vector3.y << " " << vector3.z << std::endl;
 a.p0 = orginsurface[0];
@@ -687,8 +693,8 @@ vector<Surface> ARGS::Wanggehua()
 
 	do
 	{
-		/*double angle = GetAngleFront(currentedge, fixededge);
-		if (angle < 20)
+		double angle = GetAngleFront(currentedge, fixededge);
+		/*if (angle < 50)
 		{
 			CEdge newedge;
 			newedge.startNode = currentedge.endNode;
@@ -764,7 +770,7 @@ vector<Surface> ARGS::Wanggehua()
 		//currentedge = activelist[0];
 		// view->addLine(surfacelist[0].edge1.startNode, surfacelist[0].edge1.endNode, std::to_string(i));
 		i++;
-		if (i >8)
+		if (i >10)
 		{
 			break;
 		}

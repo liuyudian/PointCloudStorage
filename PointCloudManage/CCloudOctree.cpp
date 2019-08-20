@@ -58,11 +58,11 @@ vector<pcl::PointXYZ> CCloudOctree::GetField(float L, pcl::PointXYZ pn)
 }
 
 // 获取领域
-vector<pcl::PointXYZ> CCloudOctree::GetField1(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, float L, pcl::PointXYZ pn) 
+map<float, pcl::PointXYZ> CCloudOctree::GetField1(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, float L, pcl::PointXYZ pn)
 {
 	// 获取领域点集
-	vector<pcl::PointXYZ>_vectorPointNode;
-	
+	//vector<pcl::PointXYZ>_vectorPointNode;
+	map<float, pcl::PointXYZ>_vectorPointNode;
 	// 最小体素的边长
 	float resolution = 128.0f;
 	pcl::octree::OctreePointCloudSearch<pcl::PointXYZ> octree(resolution);
@@ -87,9 +87,10 @@ vector<pcl::PointXYZ> CCloudOctree::GetField1(pcl::PointCloud<pcl::PointXYZ>::Pt
 			<< " " << cloud->points[pointIdxRadiusSearch[i]].z
 			// 下标点与搜索点的平方距离
 			<< " (squared distance: " << pointRadiusSquaredDistance[i] << ")" << std::endl;*/
-
+			float distance = sqrt(pointRadiusSquaredDistance[i]);
 			pcl::PointXYZ pn1(cloud->points[pointIdxRadiusSearch[i]].x, cloud->points[pointIdxRadiusSearch[i]].y, cloud->points[pointIdxRadiusSearch[i]].z);
-			_vectorPointNode.push_back(pn1);
+			//_vectorPointNode.push_back(pn1);
+			_vectorPointNode.insert(std::pair<float, pcl::PointXYZ>(distance, pn1));
 		}
 	}
 	return _vectorPointNode;
