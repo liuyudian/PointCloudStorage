@@ -15,7 +15,7 @@ public:
 
 	// 获取领域点
 	vector<pcl::PointXYZ> CCloudOctree::GetField(float L, pcl::PointXYZ pn);
-	vector<pcl::PointXYZ> CCloudOctree::GetField1(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,float L, pcl::PointXYZ pn);
+	map<float, pcl::PointXYZ> CCloudOctree::GetField1(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,float L, pcl::PointXYZ pn);
 	// 设置点云以及八叉树
 	void SetCloudOctree();
 };
