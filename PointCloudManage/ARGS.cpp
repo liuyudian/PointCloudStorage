@@ -170,7 +170,7 @@ Surface ARGS::SelectSurface()
 		break;
 	} while (1);
 	std::cout << vector3.x << " " << vector3.y << " " << vector3.z << std::endl;
-	a.p0 = orginsurface[0];
+a.p0 = orginsurface[0];
 	cedge.startNode = orginsurface[0];
 	a.p1 = orginsurface[1];
 	a.p2 = orginsurface[2];
@@ -221,9 +221,23 @@ pcl::PointXYZ ARGS::GetCandidate(CEdge currentEdge,Surface surface)
 	// 计算代价并排序
 	GetAngleMaxAndMin(RPoint,currentEdge);
 	// 删除活动边所对应的点
-
+	pcl::PointXYZ bestPoint;
 	auto it = ConstMap.begin();
-	pcl::PointXYZ bestPoint =it->second;
+	if (ConstMap.size() == 0)
+	{
+		flag = 1;
+		std::cout << "bestX: " << bestPoint.x << "bestY: " << bestPoint.y << "bestZ: " << bestPoint.z << std::endl;
+
+		return bestPoint;
+	}
+	else
+	{
+		bestPoint = it->second;
+		std::cout << "bestX: " << bestPoint.x << "bestY: " << bestPoint.y << "bestZ: " << bestPoint.z << std::endl;
+
+	}
+	
+
 	std::cout <<"bestX: " <<bestPoint.x <<"bestY: " <<bestPoint.y <<"bestZ: " <<bestPoint.z << std::endl;
 	return bestPoint;
 }
@@ -232,6 +246,7 @@ void GetAngleMaxAndMin(vector<pcl::PointXYZ>RPoint,CEdge currentEdge)
 {
 	listLen.clear();
 	listAngle.clear();
+	ConstMap.clear();
 	// 求 MAX and Min 以及每个候选点的最大内角角度和周长
 	for (auto it = RPoint.begin();it != RPoint.end();it++)
 	{
@@ -347,14 +362,18 @@ vector<pcl::PointXYZ> GetNewCandidatePoint(vector<pcl::PointXYZ>  RPoint, CEdge 
 		vector<double>listSurface = getNormal(surface.p0, surface.p1, surface.p2);
 		if ((list.size() != 0) && (listSurface.size() != 0))
 		{
-			if (list[1] * listSurface[1] < 0)
+			if (list[1] * listSurface[1] <0)
 			{
 				NewRPoint.push_back(point);
+				std::cout << "点:  " << point.x << " " << point.y << " " << point.z << endl;
+				std::cout << "新构建的法向量:  " << list[0]<<" "<< list[1]<<" "<<list[2]<<endl;
+				//std::cout << "当前三角面片：  " << endl;  
+				//surface.ToString() ;
+				std::cout << "当前边的法向量:  " << listSurface[0] << " " << listSurface[1] << " " << listSurface[2] << endl;
+
 			}
 		}
 	
-		
-
 	}
 	std::cout << "结束RPOINT : " << NewRPoint.size() << std::endl;
 
@@ -577,8 +596,7 @@ void ARGS::GetARGS()
 			break;
 		}
 		i++;
-		if (i > 5)
-			break;
+		
 		CEdge e1(currentEdge.startNode, point);
 		CEdge e2(point, currentEdge.endNode);
 		// 新建的三角片
@@ -618,11 +636,14 @@ vector<Surface> ARGS::Wanggehua()
 	Surface Orgin, a;
 	boost::shared_ptr<pcl::visualization::PCLVisualizer> view(new pcl::visualization::PCLVisualizer("test"));
 	pcl::PointXYZ bestpoint;
-	vector<Surface> surfacelist;
+	list<Surface> surfacelist;
 	vector<CEdge> activelist;
+	vector<Surface>surfacelist1;
+	list<CEdge>active;
 	vector<CEdge> currentlist;
 	CEdge fixededge, currentedge;
 	Orgin = SelectSurface();
+	Orgin.ToString();
 	int i1 = 0;
 	int i = 0;
 	view->addLine(Orgin.edge1.startNode, Orgin.edge1.endNode, std::to_string(i1));
@@ -631,11 +652,21 @@ vector<Surface> ARGS::Wanggehua()
 	i1++;
 	view->addLine(Orgin.edge3.startNode, Orgin.edge3.endNode, std::to_string(i1));
 	i1++;
+	active.push_front(Orgin.edge3);
+	active.push_front(Orgin.edge2);
+	surfacelist1.push_back(Orgin);
+	active.push_front(Orgin.edge1);
+
 	activelist.push_back(Orgin.edge1);
+	surfacelist.push_back(Orgin);
 	activelist.push_back(Orgin.edge2);
+	surfacelist.push_back(Orgin);
+
 	activelist.push_back(Orgin.edge3);
 	surfacelist.push_back(Orgin);
-	if (Orgin.edge1.startNode.x == Orgin.edge2.endNode.x&&Orgin.edge1.startNode.y == Orgin.edge2.endNode.y&&Orgin.edge1.startNode.z == Orgin.edge2.endNode.z)
+	currentedge = active.front();
+	a = surfacelist.front();
+/*	if (Orgin.edge1.startNode.x == Orgin.edge2.endNode.x&&Orgin.edge1.startNode.y == Orgin.edge2.endNode.y&&Orgin.edge1.startNode.z == Orgin.edge2.endNode.z)
 	{
 		fixededge = Orgin.edge2;
 	}
@@ -643,12 +674,12 @@ vector<Surface> ARGS::Wanggehua()
 	{
 		fixededge = Orgin.edge3;
 	}
-	currentedge = activelist[0];
+	currentedge = activelist[0];*/
 
 	do
 	{
-		double angle = GetAngleFront(currentedge, fixededge);
-		/*if (angle < 20)
+		/*double angle = GetAngleFront(currentedge, fixededge);
+		if (angle < 20)
 		{
 			CEdge newedge;
 			newedge.startNode = currentedge.endNode;
@@ -663,54 +694,69 @@ vector<Surface> ARGS::Wanggehua()
 			break;
 		}*/
 		currentlist.push_back(currentedge);
+		surfacelist1.push_back(a);
 		currentedge.ToString();
-		bestpoint = GetCandidate(currentedge, surfacelist[i]);
-		/*if (flag==1) 
+		std::cout << "hello : " <<  std::endl;
+		a.ToString();
+ 		bestpoint = GetCandidate(currentedge, a);
+		CEdge edge2(bestpoint, currentedge.endNode), edge1(currentedge.startNode,bestpoint);
+		/*if (flag == 1)
 		{
-			if (activelist.size() == 0)break;
 			flag = 0;
-			pcl::PointXYZ temp;
-			temp = surfacelist[i].p0;
-			surfacelist[i].p0 = surfacelist[i].p2;
-			surfacelist[i].p2 = temp;
-			activelist.erase(activelist.begin());
-			currentedge = activelist[0];
-			continue;
+			if (activelist.size() != 0)
+			{
+				activelist.erase(activelist.begin());
+				currentedge = activelist[0];
+				i--;
+				continue;
+			}
+
 		}*/
-		CEdge edge2(currentedge.endNode, bestpoint), edge1(currentedge.startNode, bestpoint);
 		/*edge1.startNode = currentedge.startNode;
 		edge1.endNode = bestpoint;
 		edge2.startNode = currentedge.endNode;
 		edge2.endNode = bestpoint;*/
 
 		a.edge1 = edge1;
-		a.edge2 = currentedge;
-		a.edge3 = edge2;
+		a.edge2 = edge2;
+		a.edge3 = currentedge;
 		a.p0 = currentedge.startNode;
 		a.p1 = bestpoint;
 		a.p2 = currentedge.endNode;
-		surfacelist.push_back(a);
-		activelist.erase(activelist.begin());
-		activelist.insert(activelist.begin(), edge2);
-		activelist.insert(activelist.begin(), edge1);
-		currentedge = activelist[0];
-	
-		//view->addLine(surfacelist[0].edge1.startNode, surfacelist[0].edge1.endNode, std::to_string(i));
-		if (i >10) break;
-		i++;
+		std::cout << "新加入的三角面片 " << std::endl;
+		a.ToString();
 
-	} while (1);
-	boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer(new pcl::visualization::PCLVisualizer("test"));
+		//surfacelist.push_back(a);
+		//activelist.erase(activelist.begin());
+		active.pop_front();
+		surfacelist.pop_front();
+		active.push_front(edge2);
+		surfacelist.push_front(a);
+		active.push_front(edge1);
+		surfacelist.push_front(a);
+
+		//activelist.insert(activelist.begin(), edge1);
+		//activelist.insert(activelist.begin(), edge2);
+		currentedge = active.front();
+		a = surfacelist.front();
+		//currentedge = activelist[0];
+		// view->addLine(surfacelist[0].edge1.startNode, surfacelist[0].edge1.endNode, std::to_string(i));
+		i++;
+		if (i >20)
+		{
+			break;
+		}
+	} while (!active.empty());
 	i = 0;
-	for (auto it = surfacelist.begin();it != surfacelist.end();it++)
+	for (auto it = surfacelist1.begin();it != surfacelist1.end();it++)
 	{
 		Surface a = *it;
-		viewer->addLine(a.edge1.startNode, a.edge1.endNode, std::to_string(i));
-		i++;
-		viewer->addLine(a.edge2.startNode, a.edge2.endNode, std::to_string(i));
-		i++;
-		viewer->addLine(a.edge3.startNode, a.edge3.endNode, std::to_string(i));
-		i++;
+		view->addLine(a.edge1.startNode, a.edge1.endNode, std::to_string(i1));
+		i1++;
+		view->addLine(a.edge2.startNode, a.edge2.endNode, std::to_string(i1));
+		i1++;
+		view->addLine(a.edge3.startNode, a.edge3.endNode, std::to_string(i1));
+		i1++;
 	}
-	return surfacelist;
+	return surfacelist1;
 }
