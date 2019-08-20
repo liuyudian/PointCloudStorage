@@ -646,9 +646,8 @@ void ARGS::GetARGS()
 }
 vector<Surface> ARGS::Wanggehua()
 {
-	Surface Orgin, a;
+	Surface Orgin, a,c1;
 	boost::shared_ptr<pcl::visualization::PCLVisualizer> view(new pcl::visualization::PCLVisualizer("test"));
-	
 	pcl::PointXYZ bestpoint;
 	list<Surface> surfacelist;
 	vector<CEdge> activelist;
@@ -660,6 +659,8 @@ vector<Surface> ARGS::Wanggehua()
 	Orgin.ToString();
 	int i1 = 0;
 	int i = 0;
+
+
 	view->addLine(Orgin.edge1.startNode, Orgin.edge1.endNode, std::to_string(i1));
 	i1++;
 	view->addLine(Orgin.edge2.startNode, Orgin.edge2.endNode, std::to_string(i1));
@@ -681,6 +682,7 @@ vector<Surface> ARGS::Wanggehua()
 	currentedge = active.front();
 	a = surfacelist.front();
 	fixededge = Orgin.edge3;
+	c1 = Orgin;
 /*	if (Orgin.edge1.startNode.x == Orgin.edge2.endNode.x&&Orgin.edge1.startNode.y == Orgin.edge2.endNode.y&&Orgin.edge1.startNode.z == Orgin.edge2.endNode.z)
 	{
 		fixededge = Orgin.edge2;
@@ -693,7 +695,7 @@ vector<Surface> ARGS::Wanggehua()
 
 	do
 	{
-		double angle = GetAngleFront(currentedge, fixededge);
+		//double angle = GetAngleFront(currentedge, fixededge);
 		/*if (angle < 50)
 		{
 			CEdge newedge;
@@ -714,10 +716,10 @@ vector<Surface> ARGS::Wanggehua()
 		std::cout << "hello : " <<  std::endl;
 		a.ToString();
  		bestpoint = GetCandidate(currentedge, a);
-		if (flag == 1)
+		/*if (flag == 1)
 		{
 			flag = 0;
-			if (active.size() != 0)
+			if (active.size() != 0||surfacelist.size()!=0)
 			{
 				active.pop_front();
 				surfacelist.pop_front();
@@ -726,7 +728,7 @@ vector<Surface> ARGS::Wanggehua()
 			}
 			else
 				break;
-		}
+		}*/
 		CEdge edge2(bestpoint, currentedge.endNode), edge1(currentedge.startNode,bestpoint);
 		/*if (flag == 1)
 		{
@@ -756,6 +758,10 @@ vector<Surface> ARGS::Wanggehua()
 
 		//surfacelist.push_back(a);
 		//activelist.erase(activelist.begin());
+		if (active.size() <=0|| surfacelist.size()<=0)
+		{
+			break;
+		}
 		active.pop_front();
 		surfacelist.pop_front();
 		active.push_front(edge2);
@@ -765,12 +771,20 @@ vector<Surface> ARGS::Wanggehua()
 
 		//activelist.insert(activelist.begin(), edge1);
 		//activelist.insert(activelist.begin(), edge2);
+		/*if(c1.isWithin(currentedge))
+		{
+		  ´ïµ½ÖÕ±ß
+			active.pop_front();
+			surfacelist.pop_front();
+			currentedge = active.front();
+        }*/
 		currentedge = active.front();
+		
 		a = surfacelist.front();
 		//currentedge = activelist[0];
 		// view->addLine(surfacelist[0].edge1.startNode, surfacelist[0].edge1.endNode, std::to_string(i));
 		i++;
-		if (i >5)
+		if (i >4)
 		{
 			break;
 		}

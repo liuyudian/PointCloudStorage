@@ -43,12 +43,17 @@ float Surface::GetMaxLen()
 }
 
 // 判断点是否在三角面片之中
-bool Surface::isWithin(pcl::PointXYZ p)
+bool Surface::isWithin(CEdge c)
 {
+	// 判断边是否在三角面片之中
+
 	
-	/*return  (bx - ax) * (y - ay) > (by - ay) * (x - ax) &&
-		(cx - bx) * (y - by) > (cy - by) * (x - bx) &&
-		(ax - cx) * (y - cy) > (ay - cy) * (x - cx) ? false : true;*/
+	//int a = count(listPointXYZ.begin(), listPointXYZ.end(), c.startNode);
+	//int b= count(listPointXYZ.begin(), listPointXYZ.end(), c.endNode);
+	//if (a > 0 && b > 0)
+	//{
+	//	return true;
+	//}
 	return false;
 }
 
