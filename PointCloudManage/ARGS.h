@@ -19,6 +19,7 @@ public:
 	vector<pcl::PointXYZ>candidatePointNode;
 
 	list<Surface> surfacelist;//三角网格化的每个三角面
+	vector<Surface>surfacelist1;
 	// 活动边存储
 	list<CEdge>activeList;
     // 存储三角面片

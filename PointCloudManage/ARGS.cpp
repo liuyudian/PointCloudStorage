@@ -19,7 +19,7 @@ double Lenmin=0;
 float PI = 3.141592654;
 int GetLineLocation(CEdge currentEdge, pcl::PointXYZ point);
 int flag = 0;
-vector<Surface>surfacelist1;
+
 // 当前三角候选三角面片的周长
 vector<double>listLen;
 double currentLen = 0;
@@ -68,7 +68,7 @@ Surface ARGS::SelectSurface()
 	pcl::getMinMax3D(*cloud, minPt, maxPt);
 	float r = 0;
 	 r = sqrt((abs(maxPt.x - minPt.x)*abs(maxPt.y - minPt.y)*abs(maxPt.z-minPt.z))/ cloud->points.size());
-	std::cout << "r is :"<<r << std::endl;
+	//std::cout << "r is :"<<r << std::endl;
 	do {
 		int sign = 0;
 		//srand(time(NULL));
@@ -624,7 +624,7 @@ void ARGS::GetARGS()
 		listSurfce.push_back(sf);
 		
 	}
-	std::cout << "三角面片 ：" << list.size() << endl;
+	//std::cout << "三角面片 ：" << list.size() << endl;
 	 i = 0;
 	for (auto it = list.begin();it != list.end();it++)
 	{
@@ -686,7 +686,7 @@ vector<Surface> ARGS::Wanggehua()
 	do
 	{
 		surfacelist1.push_back(a);
-		currentedge.ToString();
+		//currentedge.ToString();
 		//std::cout << "hello : " <<  std::endl;
 		//a.ToString();
  		bestpoint = GetCandidate(currentedge, a);
@@ -728,7 +728,7 @@ vector<Surface> ARGS::Wanggehua()
 		a.p1 = bestpoint;
 		a.p2 = currentedge.endNode;
 		//std::cout << "新加入的三角面片 " << std::endl;
-		a.ToString();
+		//a.ToString();
 
 		//surfacelist.push_back(a);
 		//activelist.erase(activelist.begin());
@@ -770,7 +770,7 @@ vector<Surface> ARGS::Wanggehua()
 		i++;
 		std::cout <<"序号:"<< i << std::endl;
 		//7197
-		if (i >20)
+		if (i > 7197)
 		{
 			break;
 		}
@@ -799,7 +799,7 @@ void ARGS::Saveasply()
 	map<MyPoint, int>pointlist;
 	map<MyPoint, int>pointlist1;
 	int i = 0;
-	for (auto itr = surfacelist1.begin(); itr != surfacelist1.end(); itr++)
+	for (vector<Surface>::iterator itr = surfacelist1.begin(); itr != surfacelist1.end(); itr++) 
 	{
 		MyPoint mypoint;
 		mypoint.x = itr->p0.x;
@@ -822,10 +822,10 @@ void ARGS::Saveasply()
 		i++;
 	}
 	map<MyPoint, int>::iterator v;
-	for (auto itr = surfacelist1.begin(); itr != surfacelist1.end(); itr++)
+	for (vector<Surface>::iterator itr = surfacelist1.begin(); itr != surfacelist1.end(); itr++)
 	{
 		MyPoint findpoint;
-		findpoint.x = itr->p0.x;
+		findpoint.x = itr->p0.x;;
 		findpoint.y = itr->p0.y;
 		findpoint.z = itr->p0.z;
 		v = pointlist1.find(findpoint);
@@ -866,7 +866,7 @@ void ARGS::Saveasply()
 	{
 		of << " " << itr->first.x << " " << itr->first.y << " " << itr->first.z << endl;
 	}
-	for (auto itr = surfacelist1.begin(); itr != surfacelist1.end(); itr++)
+	for (vector<Surface>::iterator itr = surfacelist1.begin(); itr != surfacelist1.end(); itr++)
 	{
 		of << 3 << " " << itr->mp0 << " " << itr->mp1 << " " << itr->mp2 << endl;
 	}
