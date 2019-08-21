@@ -44,11 +44,11 @@ vector<pcl::PointXYZ> CCloudOctree::GetField(float L, pcl::PointXYZ pn)
 		for (size_t i = 0; i < pointIdxRadiusSearch.size(); ++i)
 		{
 			// 搜索点的坐标
-			std::cout << "    " << cloud->points[pointIdxRadiusSearch[i]].x
-			<< " " << cloud->points[pointIdxRadiusSearch[i]].y
-			<< " " << cloud->points[pointIdxRadiusSearch[i]].z
+			//std::cout << "    " << cloud->points[pointIdxRadiusSearch[i]].x
+			//<< " " << cloud->points[pointIdxRadiusSearch[i]].y
+			//<< " " << cloud->points[pointIdxRadiusSearch[i]].z
 			// 下标点与搜索点的平方距离
-			<< " (squared distance: " << pointRadiusSquaredDistance[i] << ")" << std::endl;
+			//<< " (squared distance: " << pointRadiusSquaredDistance[i] << ")" << std::endl;
 
 			pcl::PointXYZ pn1(cloud->points[pointIdxRadiusSearch[i]].x, cloud->points[pointIdxRadiusSearch[i]].y, cloud->points[pointIdxRadiusSearch[i]].z);
 			_vectorPointNode.push_back(pn1);

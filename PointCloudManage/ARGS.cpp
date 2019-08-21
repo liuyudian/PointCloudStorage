@@ -71,7 +71,7 @@ Surface ARGS::SelectSurface()
 	std::cout << "r is :"<<r << std::endl;
 	do {
 		int sign = 0;
-		srand(time(NULL));
+		//srand(time(NULL));
 		int randnum =1128;
 		std::cout << randnum << std::endl;
 		//随机获取点云中的一个点
@@ -226,8 +226,9 @@ pcl::PointXYZ ARGS::GetCandidate(CEdge currentEdge,Surface surface)
 	{
 		L = (surface.edge1.GetLen() + surface.edge2.GetLen() + surface.edge3.GetLen())/3.0;
 	}
+	//L = 1.0f;
 	// 求边的中心点
-
+	std::cout << "L is " << L << std::endl;
 	pcl::PointXYZ centerPoint;
 	centerPoint.x = (currentEdge.startNode.x + currentEdge.endNode.x) / 2.0;
 
@@ -248,18 +249,18 @@ pcl::PointXYZ ARGS::GetCandidate(CEdge currentEdge,Surface surface)
 	if (ConstMap.size() == 0)
 	{
 		flag = 1;
-		std::cout << "bestX: " << bestPoint.x << "bestY: " << bestPoint.y << "bestZ: " << bestPoint.z << std::endl;
+		//std::cout << "bestX: " << bestPoint.x << "bestY: " << bestPoint.y << "bestZ: " << bestPoint.z << std::endl;
 		return bestPoint;
 	}
 	else
 	{
 		bestPoint = it->second;
-		std::cout << "bestX: " << bestPoint.x << "bestY: " << bestPoint.y << "bestZ: " << bestPoint.z << std::endl;
+		//std::cout << "bestX: " << bestPoint.x << "bestY: " << bestPoint.y << "bestZ: " << bestPoint.z << std::endl;
 
 	}
 	
 
-	std::cout <<"bestX: " <<bestPoint.x <<"bestY: " <<bestPoint.y <<"bestZ: " <<bestPoint.z << std::endl;
+	//std::cout <<"bestX: " <<bestPoint.x <<"bestY: " <<bestPoint.y <<"bestZ: " <<bestPoint.z << std::endl;
 	return bestPoint;
 }
 // 计算候选点集所构成的三角片的角度以及周长代价
@@ -273,7 +274,7 @@ void GetAngleMaxAndMin(vector<pcl::PointXYZ>RPoint,CEdge currentEdge)
 	{
 		GetAngleAndLen(*it, currentEdge);
 	}
-	std::cout << "RPoint: " << RPoint.size() << "listLen: " << listLen.size() << "listAngle: " << listAngle.size() << "ConstAngle1: " << ConstAngle1.size() << std::endl;
+	//std::cout << "RPoint: " << RPoint.size() << "listLen: " << listLen.size() << "listAngle: " << listAngle.size() << "ConstAngle1: " << ConstAngle1.size() << std::endl;
 	if (RPoint.size() == 0)
 	{
 		flag = 1;
@@ -367,7 +368,7 @@ vector<pcl::PointXYZ> GetNewCandidatePoint(vector<pcl::PointXYZ>  RPoint, CEdge 
 	// 根据法向量判断方向
 	// 排除左侧的点
 	vector<pcl::PointXYZ>NewRPoint;
-	std::cout << "开始RPOINT : " << RPoint.size() << std::endl;
+	//std::cout << "开始RPOINT : " << RPoint.size() << std::endl;
 	for (auto it = RPoint.begin();it != RPoint.end();it++)
 	{
 		pcl::PointXYZ point = *it;
@@ -379,17 +380,17 @@ vector<pcl::PointXYZ> GetNewCandidatePoint(vector<pcl::PointXYZ>  RPoint, CEdge 
 			if (list[1] * listSurface[1] <0)
 			{
 				NewRPoint.push_back(point);
-				std::cout << "点:  " << point.x << " " << point.y << " " << point.z << endl;
-				std::cout << "新构建的法向量:  " << list[0]<<" "<< list[1]<<" "<<list[2]<<endl;
+				//std::cout << "点:  " << point.x << " " << point.y << " " << point.z << endl;
+				//std::cout << "新构建的法向量:  " << list[0]<<" "<< list[1]<<" "<<list[2]<<endl;
 				//std::cout << "当前三角面片：  " << endl;  
 				//surface.ToString() ;
-				std::cout << "当前边的法向量:  " << listSurface[0] << " " << listSurface[1] << " " << listSurface[2] << endl;
+				//std::cout << "当前边的法向量:  " << listSurface[0] << " " << listSurface[1] << " " << listSurface[2] << endl;
 
 			}
 		}
 	
 	}
-	std::cout << "结束RPOINT : " << NewRPoint.size() << std::endl;
+	//std::cout << "结束RPOINT : " << NewRPoint.size() << std::endl;
 
 	// 法矢之间的夹角剔除大于120度的点
 	/*ConstAngle1.clear();
@@ -577,8 +578,28 @@ void ARGS::GetARGS()
 	int i = 0;
 	int count = 0;
 	Surface seedT = SelectSurface();
-	
 	boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
+
+	pcl::PointCloud<pcl::PointXYZ>::Ptr  cloud(new pcl::PointCloud<pcl::PointXYZ>);
+
+	pcl::io::loadPCDFile<pcl::PointXYZ>("bunny1.pcd", *cloud);
+
+	if (pcl::io::loadPCDFile<pcl::PointXYZ>("bunny1.pcd", *cloud) == -1)
+	{
+		std::cout << "Cloud reading failed。" << std::endl;
+		return;
+	}
+
+	//pcl::visualization::PointCloudColorHandlerGenericField<pcl::PointXYZ> fildColor(cloud,"z"); // 按照z字段进行渲染
+	//viewer->addPointCloud<pcl::PointXYZ>(cloud, fildColor, "sample cloud");
+
+	// 设置单一颜色
+	pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZ> singleColor(cloud, 0, 255, 0);//0-255  设置成绿色
+	// 颜色显示
+
+	viewer->addPointCloud(cloud, singleColor, "sample");//显示点云，其中fildColor为颜色显示
+	viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
+
 	viewer->addLine(seedT.edge1.startNode, seedT.edge1.endNode, std::to_string(count));
 	count++;
 	viewer->addLine(seedT.edge2.startNode, seedT.edge2.endNode, std::to_string(count));
@@ -646,7 +667,7 @@ void ARGS::GetARGS()
 vector<Surface> ARGS::Wanggehua()
 {
 	Surface Orgin, a,c1;
-	boost::shared_ptr<pcl::visualization::PCLVisualizer> view(new pcl::visualization::PCLVisualizer("test"));
+	//boost::shared_ptr<pcl::visualization::PCLVisualizer> view(new pcl::visualization::PCLVisualizer("test"));
 	pcl::PointXYZ bestpoint;
 	list<Surface> surfacelist;
 	vector<CEdge> activelist;
@@ -658,7 +679,27 @@ vector<Surface> ARGS::Wanggehua()
 	Orgin.ToString();
 	int i1 = 0;
 	int i = 0;
+	boost::shared_ptr<pcl::visualization::PCLVisualizer> view(new pcl::visualization::PCLVisualizer("3D Viewer"));
 
+	pcl::PointCloud<pcl::PointXYZ>::Ptr  cloud(new pcl::PointCloud<pcl::PointXYZ>);
+
+	pcl::io::loadPCDFile<pcl::PointXYZ>("plane.pcd", *cloud);
+
+	if (pcl::io::loadPCDFile<pcl::PointXYZ>("plane.pcd", *cloud) == -1)
+	{
+		std::cout << "Cloud reading failed。" << std::endl;
+		return surfacelist1;
+	}
+
+	//pcl::visualization::PointCloudColorHandlerGenericField<pcl::PointXYZ> fildColor(cloud,"z"); // 按照z字段进行渲染
+	//viewer->addPointCloud<pcl::PointXYZ>(cloud, fildColor, "sample cloud");
+
+	// 设置单一颜色
+	pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZ> singleColor(cloud,255, 0, 0);//0-255  设置成绿色
+	// 颜色显示
+
+	view->addPointCloud(cloud, singleColor, "sample");//显示点云，其中fildColor为颜色显示
+	//view->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
 
 	view->addLine(Orgin.edge1.startNode, Orgin.edge1.endNode, std::to_string(i1));
 	i1++;
@@ -683,44 +724,38 @@ vector<Surface> ARGS::Wanggehua()
 	a = surfacelist.front();
 	fixededge = Orgin.edge3;
 	c1 = Orgin;
+	int flag1 = 1;
 	do
+
 	{
+		std::cout << "次数: "<<i << std::endl;
 		surfacelist1.push_back(a);
 		currentedge.ToString();
-		std::cout << "hello : " <<  std::endl;
+	    std::cout << "hello : " <<  std::endl;
 		a.ToString();
  		bestpoint = GetCandidate(currentedge, a);
 		if (flag == 1)
 		{
 			flag = 0;
-			if (active.size() != 0||surfacelist.size()!=0)
+			if (!active.empty())
 			{
 				active.pop_front();
 				surfacelist.pop_front();
-				currentedge = active.front();
-				continue;
+				//currentedge = active.front();
+				if (!active.empty())
+				{
+					currentedge.startNode = active.front().endNode;
+					currentedge.endNode = active.front().startNode;
+					continue;
+				}
+				else
+					break;
+				
 			}
 			else
 				break;
 		}
 		CEdge edge2(bestpoint, currentedge.endNode), edge1(currentedge.startNode,bestpoint);
-		/*if (flag == 1)
-		{
-			flag = 0;
-			if (activelist.size() != 0)
-			{
-				activelist.erase(activelist.begin());
-				currentedge = activelist[0];
-				i--;
-				continue;
-			}
-
-		}*/
-		/*edge1.startNode = currentedge.startNode;
-		edge1.endNode = bestpoint;
-		edge2.startNode = currentedge.endNode;
-		edge2.endNode = bestpoint;*/
-
 		a.edge1 = edge1;
 		a.edge2 = edge2;
 		a.edge3 = currentedge;
@@ -729,45 +764,38 @@ vector<Surface> ARGS::Wanggehua()
 		a.p2 = currentedge.endNode;
 		std::cout << "新加入的三角面片 " << std::endl;
 		a.ToString();
-
-		//surfacelist.push_back(a);
-		//activelist.erase(activelist.begin());
-		/*if (active.size() <=0|| surfacelist.size()<=0)
+		if (!active.empty())
 		{
-			break;
-		}*/
-		active.pop_front();
-		surfacelist.pop_front();
-		active.push_front(edge2);
-		surfacelist.push_front(a);
-		active.push_front(edge1);
-		surfacelist.push_front(a);
-
-		//activelist.insert(activelist.begin(), edge1);
-		//activelist.insert(activelist.begin(), edge2);
-		/*if(c1.isWithin(currentedge))
-		{
-		    达到终边
 			active.pop_front();
 			surfacelist.pop_front();
-			currentedge = active.front();
-        }*/
+			active.push_front(edge2);
+			surfacelist.push_front(a);
+			active.push_front(edge1);
+			surfacelist.push_front(a);
+		}
+		else
+			break;
 		currentedge = active.front();
+		a = surfacelist.front();
 		while (count(currentlist.begin(),currentlist.end(), currentedge)>0)
 		{
 			active.pop_front();
 			surfacelist.pop_front();
 			currentedge = active.front();
+			if (active.empty())
+			{
+				flag1 = 0;
+			}
+				
 		}
-		a = surfacelist.front();
-		currentlist.push_back(currentedge);
-		//currentedge = activelist[0];
-		// view->addLine(surfacelist[0].edge1.startNode, surfacelist[0].edge1.endNode, std::to_string(i));
-		i++;
-		if (i >10)
-		{
+		if (flag1 == 0)
 			break;
-		}
+		
+		currentlist.push_back(currentedge);
+	
+		i++;
+		if (i > 47)
+			break;
 	
 	
 	} while (!active.empty());
