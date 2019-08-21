@@ -63,6 +63,7 @@ void PointCloudManage::Getzhongzi()
 {
 	ARGS a;
 	a.Wanggehua();
+	a.Saveasply();
 }
 
 

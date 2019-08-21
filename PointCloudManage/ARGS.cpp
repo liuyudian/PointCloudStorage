@@ -227,7 +227,7 @@ pcl::PointXYZ ARGS::GetCandidate(CEdge currentEdge,Surface surface)
 		L = (surface.edge1.GetLen() + surface.edge2.GetLen() + surface.edge3.GetLen())/3.0;
 	}
 	// 求边的中心点
-
+	L = 1.0f;
 	pcl::PointXYZ centerPoint;
 	centerPoint.x = (currentEdge.startNode.x + currentEdge.endNode.x) / 2.0;
 
@@ -248,18 +248,18 @@ pcl::PointXYZ ARGS::GetCandidate(CEdge currentEdge,Surface surface)
 	if (ConstMap.size() == 0)
 	{
 		flag = 1;
-		std::cout << "bestX: " << bestPoint.x << "bestY: " << bestPoint.y << "bestZ: " << bestPoint.z << std::endl;
+		//std::cout << "bestX: " << bestPoint.x << "bestY: " << bestPoint.y << "bestZ: " << bestPoint.z << std::endl;
 		return bestPoint;
 	}
 	else
 	{
 		bestPoint = it->second;
-		std::cout << "bestX: " << bestPoint.x << "bestY: " << bestPoint.y << "bestZ: " << bestPoint.z << std::endl;
+		//std::cout << "bestX: " << bestPoint.x << "bestY: " << bestPoint.y << "bestZ: " << bestPoint.z << std::endl;
 
 	}
 	
 
-	std::cout <<"bestX: " <<bestPoint.x <<"bestY: " <<bestPoint.y <<"bestZ: " <<bestPoint.z << std::endl;
+	//std::cout <<"bestX: " <<bestPoint.x <<"bestY: " <<bestPoint.y <<"bestZ: " <<bestPoint.z << std::endl;
 	return bestPoint;
 }
 // 计算候选点集所构成的三角片的角度以及周长代价
@@ -273,7 +273,7 @@ void GetAngleMaxAndMin(vector<pcl::PointXYZ>RPoint,CEdge currentEdge)
 	{
 		GetAngleAndLen(*it, currentEdge);
 	}
-	std::cout << "RPoint: " << RPoint.size() << "listLen: " << listLen.size() << "listAngle: " << listAngle.size() << "ConstAngle1: " << ConstAngle1.size() << std::endl;
+	//std::cout << "RPoint: " << RPoint.size() << "listLen: " << listLen.size() << "listAngle: " << listAngle.size() << "ConstAngle1: " << ConstAngle1.size() << std::endl;
 	if (RPoint.size() == 0)
 	{
 		flag = 1;
@@ -367,7 +367,7 @@ vector<pcl::PointXYZ> GetNewCandidatePoint(vector<pcl::PointXYZ>  RPoint, CEdge 
 	// 根据法向量判断方向
 	// 排除左侧的点
 	vector<pcl::PointXYZ>NewRPoint;
-	std::cout << "开始RPOINT : " << RPoint.size() << std::endl;
+	//std::cout << "开始RPOINT : " << RPoint.size() << std::endl;
 	for (auto it = RPoint.begin();it != RPoint.end();it++)
 	{
 		pcl::PointXYZ point = *it;
@@ -379,17 +379,17 @@ vector<pcl::PointXYZ> GetNewCandidatePoint(vector<pcl::PointXYZ>  RPoint, CEdge 
 			if (list[1] * listSurface[1] <0)
 			{
 				NewRPoint.push_back(point);
-				std::cout << "点:  " << point.x << " " << point.y << " " << point.z << endl;
-				std::cout << "新构建的法向量:  " << list[0]<<" "<< list[1]<<" "<<list[2]<<endl;
+				//std::cout << "点:  " << point.x << " " << point.y << " " << point.z << endl;
+				//std::cout << "新构建的法向量:  " << list[0]<<" "<< list[1]<<" "<<list[2]<<endl;
 				//std::cout << "当前三角面片：  " << endl;  
 				//surface.ToString() ;
-				std::cout << "当前边的法向量:  " << listSurface[0] << " " << listSurface[1] << " " << listSurface[2] << endl;
+				//std::cout << "当前边的法向量:  " << listSurface[0] << " " << listSurface[1] << " " << listSurface[2] << endl;
 
 			}
 		}
 	
 	}
-	std::cout << "结束RPOINT : " << NewRPoint.size() << std::endl;
+	//std::cout << "结束RPOINT : " << NewRPoint.size() << std::endl;
 
 	// 法矢之间的夹角剔除大于120度的点
 	/*ConstAngle1.clear();
@@ -648,14 +648,14 @@ vector<Surface> ARGS::Wanggehua()
 	Surface Orgin, a,c1;
 	boost::shared_ptr<pcl::visualization::PCLVisualizer> view(new pcl::visualization::PCLVisualizer("test"));
 	pcl::PointXYZ bestpoint;
-	list<Surface> surfacelist;
+	
 	vector<CEdge> activelist;
 	vector<Surface>surfacelist1;
 	list<CEdge>active;
 	vector<CEdge> currentlist;
 	CEdge fixededge, currentedge;
 	Orgin = SelectSurface();
-	Orgin.ToString();
+	//Orgin.ToString();
 	int i1 = 0;
 	int i = 0;
 
@@ -687,8 +687,8 @@ vector<Surface> ARGS::Wanggehua()
 	{
 		surfacelist1.push_back(a);
 		currentedge.ToString();
-		std::cout << "hello : " <<  std::endl;
-		a.ToString();
+		//std::cout << "hello : " <<  std::endl;
+		//a.ToString();
  		bestpoint = GetCandidate(currentedge, a);
 		if (flag == 1)
 		{
@@ -697,7 +697,8 @@ vector<Surface> ARGS::Wanggehua()
 			{
 				active.pop_front();
 				surfacelist.pop_front();
-				currentedge = active.front();
+				currentedge.startNode = active.front().endNode;
+				currentedge.endNode = active.front().startNode;
 				continue;
 			}
 			else
@@ -726,7 +727,7 @@ vector<Surface> ARGS::Wanggehua()
 		a.p0 = currentedge.startNode;
 		a.p1 = bestpoint;
 		a.p2 = currentedge.endNode;
-		std::cout << "新加入的三角面片 " << std::endl;
+		//std::cout << "新加入的三角面片 " << std::endl;
 		a.ToString();
 
 		//surfacelist.push_back(a);
@@ -735,12 +736,16 @@ vector<Surface> ARGS::Wanggehua()
 		{
 			break;
 		}*/
+		if(active.size()>0)
+		{
 		active.pop_front();
 		surfacelist.pop_front();
 		active.push_front(edge2);
 		surfacelist.push_front(a);
 		active.push_front(edge1);
 		surfacelist.push_front(a);
+		}
+		else break;
 
 		//activelist.insert(activelist.begin(), edge1);
 		//activelist.insert(activelist.begin(), edge2);
@@ -763,7 +768,9 @@ vector<Surface> ARGS::Wanggehua()
 		//currentedge = activelist[0];
 		// view->addLine(surfacelist[0].edge1.startNode, surfacelist[0].edge1.endNode, std::to_string(i));
 		i++;
-		if (i >10)
+		std::cout <<"序号:"<< i << std::endl;
+		//7197
+		if (i >20)
 		{
 			break;
 		}
@@ -784,4 +791,84 @@ vector<Surface> ARGS::Wanggehua()
 		i1++;
 	}
 	return surfacelist1;
+}
+
+//另存为ply文件
+void ARGS::Saveasply()
+{
+	map<MyPoint, int>pointlist;
+	map<MyPoint, int>pointlist1;
+	int i = 0;
+	for (list<Surface>::iterator itr = surfacelist.begin(); itr != surfacelist.end(); itr++) 
+	{
+		MyPoint mypoint;
+		mypoint.x = itr->p0.x;
+		mypoint.y = itr->p0.y;
+		mypoint.z = itr->p0.z;
+		pointlist.insert(std::pair<MyPoint, int>(mypoint, i));
+		mypoint.x = itr->p1.x;
+		mypoint.y = itr->p1.y;
+		mypoint.z = itr->p1.z;
+		pointlist.insert(std::pair<MyPoint, int>(mypoint, i));
+		mypoint.x = itr->p2.x;
+		mypoint.y = itr->p2.y;
+		mypoint.z = itr->p2.z;
+		pointlist.insert(std::pair<MyPoint, int>(mypoint, i));
+		
+	}
+	for (map<MyPoint, int>::iterator itr = pointlist.begin(); itr != pointlist.end(); itr++)
+	{
+		pointlist1.insert(std::pair<MyPoint, int>(itr->first,i));
+		i++;
+	}
+	map<MyPoint, int>::iterator v;
+	for (list<Surface>::iterator itr = surfacelist.begin(); itr != surfacelist.end(); itr++)
+	{
+		MyPoint findpoint;
+		findpoint.x = itr->edge1.startNode.x;
+		findpoint.y = itr->edge1.startNode.y;
+		findpoint.z = itr->edge1.startNode.z;
+		v = pointlist1.find(findpoint);
+		itr->mp0 = v->second;
+		//
+		findpoint.x = itr->edge1.endNode.x;
+		findpoint.y = itr->edge1.endNode.y;
+		findpoint.z = itr->edge1.endNode.z;
+		v = pointlist1.find(findpoint);
+		itr->mp1 = v->second;
+		//
+		findpoint.x = itr->edge2.endNode.x;
+		findpoint.y = itr->edge2.endNode.y;
+		findpoint.z = itr->edge2.endNode.z;
+		v = pointlist1.find(findpoint);
+		itr->mp2 = v->second;
+	}
+	//
+	string fileName = "bunny.ply";
+	ofstream of(fileName.c_str());
+	of.precision(std::numeric_limits<double>::digits10);
+	//ofstream OpenFile("D:\\vs2017projects\\Task2\\testmap.ply");
+	if (of.fail())
+	{
+		std::cout << "打开文件错误!" << std::endl;
+	}
+	of << "ply" << endl;
+	of << "format ascii 1.0" << endl;
+	of << "comment generated by platoply" << endl;
+	of << "element vertex " << pointlist1.size()<< endl;
+	of << "property float32 x" << endl;
+	of << "property float32 y" << endl;
+	of << "property float32 z" << endl;
+	of << "element face " << surfacelist.size() << endl;
+	of << "property list uint8 int32 vertex_indices" << endl;
+	of << "end_header" << endl;
+	for (map<MyPoint, int>::iterator itr = pointlist1.begin(); itr != pointlist1.end(); itr++)
+	{
+		of << " " << itr->first.x << " " << itr->first.y << " " << itr->first.z << endl;
+	}
+	for (list<Surface>::iterator itr = surfacelist.begin(); itr != surfacelist.end(); itr++)
+	{
+		of << 3 << " " << itr->mp0 << " " << itr->mp1 << " " << itr->mp2 << endl;
+	}
+
 }

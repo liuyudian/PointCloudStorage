@@ -8,6 +8,7 @@
 #include<vector>
 #include"Vector3.h"
 #include<math.h>
+#include"MyPoint.h"
 using namespace std;
 
 class ARGS
@@ -16,6 +17,8 @@ public:
 
 	// 特性
 	vector<pcl::PointXYZ>candidatePointNode;
+
+	list<Surface> surfacelist;//三角网格化的每个三角面
 	// 活动边存储
 	list<CEdge>activeList;
     // 存储三角面片
@@ -37,6 +40,8 @@ public:
 	//点云网格化
 	vector<Surface> Wanggehua();
 
+	//另存为ply文件
+	void Saveasply();
 
 };
 
