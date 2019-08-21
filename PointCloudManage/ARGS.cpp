@@ -71,7 +71,7 @@ Surface ARGS::SelectSurface()
 	std::cout << "r is :"<<r << std::endl;
 	do {
 		int sign = 0;
-		srand(time(NULL));
+		//srand(time(NULL));
 		int randnum =1128;
 		std::cout << randnum << std::endl;
 		//随机获取点云中的一个点
@@ -745,7 +745,6 @@ vector<Surface> ARGS::Wanggehua()
 		edge1.endNode = bestpoint;
 		edge2.startNode = currentedge.endNode;
 		edge2.endNode = bestpoint;*/
-
 		a.edge1 = edge1;
 		a.edge2 = edge2;
 		a.edge3 = currentedge;

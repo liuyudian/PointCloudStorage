@@ -22,5 +22,7 @@ public:
 		std::cout << " " << startNode.x << " " << startNode.y << " " << startNode.z << std::endl;
 		std::cout << " " << endNode.x << " " << endNode.y << " " << endNode.z << std::endl;
 	}
+
+	
 };
 
