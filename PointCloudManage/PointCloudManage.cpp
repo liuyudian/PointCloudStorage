@@ -41,7 +41,7 @@ PointCloudManage::PointCloudManage(QWidget *parent):
 	connect(ui->pushButton_4, SIGNAL(clicked()), this, SLOT(GetLeafShow()));//另存为按钮
 	connect(ui->pushButton_5, SIGNAL(clicked()), this, SLOT(Triangulation()));//三角网格剖分
 	connect(ui->pushButtonGrid, SIGNAL(clicked()), this, SLOT(MeshGeneration()));//三角网格剖分																		  //connect(action11, SIGNAL(clicked()), this, SLOT(Triangulation()));
-	connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(Getzhongzi()));//种子三角面片获取
+	connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(Gridding()));//种子三角面片获取
 }
 
 // 自定义网格剖分
@@ -59,10 +59,10 @@ void PointCloudManage::MeshGeneration()
 	}
 }
 //种子三角面片获取
-void PointCloudManage::Getzhongzi()
+void PointCloudManage::Gridding()
 {
 	ARGS a;
-	a.Wanggehua();
+	a.ArgsAlgorithm();
 	a.Saveasply();
 }
 

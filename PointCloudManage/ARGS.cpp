@@ -643,7 +643,8 @@ void ARGS::GetARGS()
    }*/
 
 }
-vector<Surface> ARGS::Wanggehua()
+// 网格重建
+vector<Surface> ARGS::ArgsAlgorithm()
 {
 	Surface Orgin, a,c1;
 	boost::shared_ptr<pcl::visualization::PCLVisualizer> view(new pcl::visualization::PCLVisualizer("test"));
@@ -666,6 +667,7 @@ vector<Surface> ARGS::Wanggehua()
 	i1++;
 	view->addLine(Orgin.edge3.startNode, Orgin.edge3.endNode, std::to_string(i1));
 	i1++;
+	// 将种子三角面片的边添加到活动边表中
 	active.push_front(Orgin.edge3);
 	active.push_front(Orgin.edge2);
 	surfacelist1.push_back(Orgin);

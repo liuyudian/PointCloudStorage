@@ -39,7 +39,7 @@ public:
 	void GetARGS();
 
 	//点云网格化
-	vector<Surface> Wanggehua();
+	vector<Surface> ArgsAlgorithm();
 
 	//另存为ply文件
 	void Saveasply();

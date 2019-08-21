@@ -73,5 +73,5 @@ public slots:
 	void GetLeafShow();
 	void Triangulation();//三角网格剖分
 	void MeshGeneration();//自定义网格剖分
-	void Getzhongzi();//种子三角面片获取
+	void Gridding();//种子三角面片获取
 };
