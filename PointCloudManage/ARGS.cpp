@@ -610,7 +610,6 @@ void ARGS::GetARGS()
 			break;
 		}
 		i++;
-		
 		CEdge e1(currentEdge.startNode, point);
 		CEdge e2(point, currentEdge.endNode);
 		// 新建的三角片
@@ -625,7 +624,6 @@ void ARGS::GetARGS()
 		listSurfce.push_back(sf);
 		
 	}
-
 	std::cout << "三角面片 ：" << list.size() << endl;
 	 i = 0;
 	for (auto it = list.begin();it != list.end();it++)
@@ -681,43 +679,18 @@ vector<Surface> ARGS::Wanggehua()
 	activelist.push_back(Orgin.edge3);
 	surfacelist.push_back(Orgin);
 	currentedge = active.front();
+	currentlist.push_back(currentedge);
 	a = surfacelist.front();
 	fixededge = Orgin.edge3;
 	c1 = Orgin;
-/*	if (Orgin.edge1.startNode.x == Orgin.edge2.endNode.x&&Orgin.edge1.startNode.y == Orgin.edge2.endNode.y&&Orgin.edge1.startNode.z == Orgin.edge2.endNode.z)
-	{
-		fixededge = Orgin.edge2;
-	}
-	if (Orgin.edge1.startNode.x == Orgin.edge3.endNode.x&&Orgin.edge1.startNode.y == Orgin.edge3.endNode.y&&Orgin.edge1.startNode.z == Orgin.edge3.endNode.z)
-	{
-		fixededge = Orgin.edge3;
-	}
-	currentedge = activelist[0];*/
-
 	do
 	{
-		//double angle = GetAngleFront(currentedge, fixededge);
-		/*if (angle < 50)
-		{
-			CEdge newedge;
-			newedge.startNode = currentedge.endNode;
-			newedge.endNode = fixededge.endNode;
-			a.edge1 = newedge;
-			a.edge2 = currentedge;
-			a.edge3 = fixededge;
-			surfacelist.push_back(a);
-			activelist.erase(activelist.begin());
-			activelist.erase(activelist.end());
-			activelist.insert(activelist.begin(), newedge);
-			break;
-		}*/
-		currentlist.push_back(currentedge);
 		surfacelist1.push_back(a);
 		currentedge.ToString();
 		std::cout << "hello : " <<  std::endl;
 		a.ToString();
  		bestpoint = GetCandidate(currentedge, a);
-		/*if (flag == 1)
+		if (flag == 1)
 		{
 			flag = 0;
 			if (active.size() != 0||surfacelist.size()!=0)
@@ -729,7 +702,7 @@ vector<Surface> ARGS::Wanggehua()
 			}
 			else
 				break;
-		}*/
+		}
 		CEdge edge2(bestpoint, currentedge.endNode), edge1(currentedge.startNode,bestpoint);
 		/*if (flag == 1)
 		{
@@ -759,10 +732,10 @@ vector<Surface> ARGS::Wanggehua()
 
 		//surfacelist.push_back(a);
 		//activelist.erase(activelist.begin());
-		if (active.size() <=0|| surfacelist.size()<=0)
+		/*if (active.size() <=0|| surfacelist.size()<=0)
 		{
 			break;
-		}
+		}*/
 		active.pop_front();
 		surfacelist.pop_front();
 		active.push_front(edge2);
@@ -774,18 +747,24 @@ vector<Surface> ARGS::Wanggehua()
 		//activelist.insert(activelist.begin(), edge2);
 		/*if(c1.isWithin(currentedge))
 		{
-		  达到终边
+		    达到终边
 			active.pop_front();
 			surfacelist.pop_front();
 			currentedge = active.front();
         }*/
 		currentedge = active.front();
-		
+		while (count(currentlist.begin(),currentlist.end(), currentedge)>0)
+		{
+			active.pop_front();
+			surfacelist.pop_front();
+			currentedge = active.front();
+		}
 		a = surfacelist.front();
+		currentlist.push_back(currentedge);
 		//currentedge = activelist[0];
 		// view->addLine(surfacelist[0].edge1.startNode, surfacelist[0].edge1.endNode, std::to_string(i));
 		i++;
-		if (i >4)
+		if (i >10)
 		{
 			break;
 		}
