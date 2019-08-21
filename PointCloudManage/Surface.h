@@ -17,6 +17,8 @@ public:
 	CEdge edge1;
 	CEdge edge2;
 	CEdge edge3;
+	//点的位置
+	int mp0, mp1, mp2;
 	// 三角面片的三角形性质 1 表示钝角， 0表示锐角
 	vector<double>list;
 

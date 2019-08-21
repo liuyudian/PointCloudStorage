@@ -226,9 +226,8 @@ pcl::PointXYZ ARGS::GetCandidate(CEdge currentEdge,Surface surface)
 	{
 		L = (surface.edge1.GetLen() + surface.edge2.GetLen() + surface.edge3.GetLen())/3.0;
 	}
-	//L = 1.0f;
 	// 求边的中心点
-	std::cout << "L is " << L << std::endl;
+	L = 1.0f;
 	pcl::PointXYZ centerPoint;
 	centerPoint.x = (currentEdge.startNode.x + currentEdge.endNode.x) / 2.0;
 
@@ -578,28 +577,8 @@ void ARGS::GetARGS()
 	int i = 0;
 	int count = 0;
 	Surface seedT = SelectSurface();
+	
 	boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
-
-	pcl::PointCloud<pcl::PointXYZ>::Ptr  cloud(new pcl::PointCloud<pcl::PointXYZ>);
-
-	pcl::io::loadPCDFile<pcl::PointXYZ>("bunny1.pcd", *cloud);
-
-	if (pcl::io::loadPCDFile<pcl::PointXYZ>("bunny1.pcd", *cloud) == -1)
-	{
-		std::cout << "Cloud reading failed。" << std::endl;
-		return;
-	}
-
-	//pcl::visualization::PointCloudColorHandlerGenericField<pcl::PointXYZ> fildColor(cloud,"z"); // 按照z字段进行渲染
-	//viewer->addPointCloud<pcl::PointXYZ>(cloud, fildColor, "sample cloud");
-
-	// 设置单一颜色
-	pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZ> singleColor(cloud, 0, 255, 0);//0-255  设置成绿色
-	// 颜色显示
-
-	viewer->addPointCloud(cloud, singleColor, "sample");//显示点云，其中fildColor为颜色显示
-	viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
-
 	viewer->addLine(seedT.edge1.startNode, seedT.edge1.endNode, std::to_string(count));
 	count++;
 	viewer->addLine(seedT.edge2.startNode, seedT.edge2.endNode, std::to_string(count));
@@ -667,39 +646,19 @@ void ARGS::GetARGS()
 vector<Surface> ARGS::Wanggehua()
 {
 	Surface Orgin, a,c1;
-	//boost::shared_ptr<pcl::visualization::PCLVisualizer> view(new pcl::visualization::PCLVisualizer("test"));
+	boost::shared_ptr<pcl::visualization::PCLVisualizer> view(new pcl::visualization::PCLVisualizer("test"));
 	pcl::PointXYZ bestpoint;
-	list<Surface> surfacelist;
+	
 	vector<CEdge> activelist;
 	vector<Surface>surfacelist1;
 	list<CEdge>active;
 	vector<CEdge> currentlist;
 	CEdge fixededge, currentedge;
 	Orgin = SelectSurface();
-	Orgin.ToString();
+	//Orgin.ToString();
 	int i1 = 0;
 	int i = 0;
-	boost::shared_ptr<pcl::visualization::PCLVisualizer> view(new pcl::visualization::PCLVisualizer("3D Viewer"));
 
-	pcl::PointCloud<pcl::PointXYZ>::Ptr  cloud(new pcl::PointCloud<pcl::PointXYZ>);
-
-	pcl::io::loadPCDFile<pcl::PointXYZ>("plane.pcd", *cloud);
-
-	if (pcl::io::loadPCDFile<pcl::PointXYZ>("plane.pcd", *cloud) == -1)
-	{
-		std::cout << "Cloud reading failed。" << std::endl;
-		return surfacelist1;
-	}
-
-	//pcl::visualization::PointCloudColorHandlerGenericField<pcl::PointXYZ> fildColor(cloud,"z"); // 按照z字段进行渲染
-	//viewer->addPointCloud<pcl::PointXYZ>(cloud, fildColor, "sample cloud");
-
-	// 设置单一颜色
-	pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZ> singleColor(cloud,255, 0, 0);//0-255  设置成绿色
-	// 颜色显示
-
-	view->addPointCloud(cloud, singleColor, "sample");//显示点云，其中fildColor为颜色显示
-	//view->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
 
 	view->addLine(Orgin.edge1.startNode, Orgin.edge1.endNode, std::to_string(i1));
 	i1++;
@@ -724,78 +683,97 @@ vector<Surface> ARGS::Wanggehua()
 	a = surfacelist.front();
 	fixededge = Orgin.edge3;
 	c1 = Orgin;
-	int flag1 = 1;
 	do
-
 	{
-		std::cout << "次数: "<<i << std::endl;
 		surfacelist1.push_back(a);
 		currentedge.ToString();
-	    std::cout << "hello : " <<  std::endl;
-		a.ToString();
+		//std::cout << "hello : " <<  std::endl;
+		//a.ToString();
  		bestpoint = GetCandidate(currentedge, a);
 		if (flag == 1)
 		{
 			flag = 0;
-			if (!active.empty())
+			if (active.size() != 0||surfacelist.size()!=0)
 			{
 				active.pop_front();
 				surfacelist.pop_front();
-				//currentedge = active.front();
-				if (!active.empty())
-				{
-					currentedge.startNode = active.front().endNode;
-					currentedge.endNode = active.front().startNode;
-					continue;
-				}
-				else
-					break;
-				
+				currentedge.startNode = active.front().endNode;
+				currentedge.endNode = active.front().startNode;
+				continue;
 			}
 			else
 				break;
 		}
 		CEdge edge2(bestpoint, currentedge.endNode), edge1(currentedge.startNode,bestpoint);
+		/*if (flag == 1)
+		{
+			flag = 0;
+			if (activelist.size() != 0)
+			{
+				activelist.erase(activelist.begin());
+				currentedge = activelist[0];
+				i--;
+				continue;
+			}
+
+		}*/
+		/*edge1.startNode = currentedge.startNode;
+		edge1.endNode = bestpoint;
+		edge2.startNode = currentedge.endNode;
+		edge2.endNode = bestpoint;*/
 		a.edge1 = edge1;
 		a.edge2 = edge2;
 		a.edge3 = currentedge;
 		a.p0 = currentedge.startNode;
 		a.p1 = bestpoint;
 		a.p2 = currentedge.endNode;
-		std::cout << "新加入的三角面片 " << std::endl;
+		//std::cout << "新加入的三角面片 " << std::endl;
 		a.ToString();
-		if (!active.empty())
+
+		//surfacelist.push_back(a);
+		//activelist.erase(activelist.begin());
+		/*if (active.size() <=0|| surfacelist.size()<=0)
 		{
+			break;
+		}*/
+		if(active.size()>0)
+		{
+		active.pop_front();
+		surfacelist.pop_front();
+		active.push_front(edge2);
+		surfacelist.push_front(a);
+		active.push_front(edge1);
+		surfacelist.push_front(a);
+		}
+		else break;
+
+		//activelist.insert(activelist.begin(), edge1);
+		//activelist.insert(activelist.begin(), edge2);
+		/*if(c1.isWithin(currentedge))
+		{
+		    达到终边
 			active.pop_front();
 			surfacelist.pop_front();
-			active.push_front(edge2);
-			surfacelist.push_front(a);
-			active.push_front(edge1);
-			surfacelist.push_front(a);
-		}
-		else
-			break;
+			currentedge = active.front();
+        }*/
 		currentedge = active.front();
-		a = surfacelist.front();
 		while (count(currentlist.begin(),currentlist.end(), currentedge)>0)
 		{
 			active.pop_front();
 			surfacelist.pop_front();
 			currentedge = active.front();
-			if (active.empty())
-			{
-				 flag1 = 0;
-			}
-				
 		}
-		if (flag1 == 0)
-			break;
-		
+		a = surfacelist.front();
 		currentlist.push_back(currentedge);
-	
+		//currentedge = activelist[0];
+		// view->addLine(surfacelist[0].edge1.startNode, surfacelist[0].edge1.endNode, std::to_string(i));
 		i++;
-		if (i > 47)
+		std::cout <<"序号:"<< i << std::endl;
+		//7197
+		if (i >20)
+		{
 			break;
+		}
 	
 	
 	} while (!active.empty());
@@ -813,4 +791,84 @@ vector<Surface> ARGS::Wanggehua()
 		i1++;
 	}
 	return surfacelist1;
+}
+
+//另存为ply文件
+void ARGS::Saveasply()
+{
+	map<MyPoint, int>pointlist;
+	map<MyPoint, int>pointlist1;
+	int i = 0;
+	for (list<Surface>::iterator itr = surfacelist.begin(); itr != surfacelist.end(); itr++) 
+	{
+		MyPoint mypoint;
+		mypoint.x = itr->p0.x;
+		mypoint.y = itr->p0.y;
+		mypoint.z = itr->p0.z;
+		pointlist.insert(std::pair<MyPoint, int>(mypoint, i));
+		mypoint.x = itr->p1.x;
+		mypoint.y = itr->p1.y;
+		mypoint.z = itr->p1.z;
+		pointlist.insert(std::pair<MyPoint, int>(mypoint, i));
+		mypoint.x = itr->p2.x;
+		mypoint.y = itr->p2.y;
+		mypoint.z = itr->p2.z;
+		pointlist.insert(std::pair<MyPoint, int>(mypoint, i));
+		
+	}
+	for (map<MyPoint, int>::iterator itr = pointlist.begin(); itr != pointlist.end(); itr++)
+	{
+		pointlist1.insert(std::pair<MyPoint, int>(itr->first,i));
+		i++;
+	}
+	map<MyPoint, int>::iterator v;
+	for (list<Surface>::iterator itr = surfacelist.begin(); itr != surfacelist.end(); itr++)
+	{
+		MyPoint findpoint;
+		findpoint.x = itr->edge1.startNode.x;
+		findpoint.y = itr->edge1.startNode.y;
+		findpoint.z = itr->edge1.startNode.z;
+		v = pointlist1.find(findpoint);
+		itr->mp0 = v->second;
+		//
+		findpoint.x = itr->edge1.endNode.x;
+		findpoint.y = itr->edge1.endNode.y;
+		findpoint.z = itr->edge1.endNode.z;
+		v = pointlist1.find(findpoint);
+		itr->mp1 = v->second;
+		//
+		findpoint.x = itr->edge2.endNode.x;
+		findpoint.y = itr->edge2.endNode.y;
+		findpoint.z = itr->edge2.endNode.z;
+		v = pointlist1.find(findpoint);
+		itr->mp2 = v->second;
+	}
+	//
+	string fileName = "bunny.ply";
+	ofstream of(fileName.c_str());
+	of.precision(std::numeric_limits<double>::digits10);
+	//ofstream OpenFile("D:\\vs2017projects\\Task2\\testmap.ply");
+	if (of.fail())
+	{
+		std::cout << "打开文件错误!" << std::endl;
+	}
+	of << "ply" << endl;
+	of << "format ascii 1.0" << endl;
+	of << "comment generated by platoply" << endl;
+	of << "element vertex " << pointlist1.size()<< endl;
+	of << "property float32 x" << endl;
+	of << "property float32 y" << endl;
+	of << "property float32 z" << endl;
+	of << "element face " << surfacelist.size() << endl;
+	of << "property list uint8 int32 vertex_indices" << endl;
+	of << "end_header" << endl;
+	for (map<MyPoint, int>::iterator itr = pointlist1.begin(); itr != pointlist1.end(); itr++)
+	{
+		of << " " << itr->first.x << " " << itr->first.y << " " << itr->first.z << endl;
+	}
+	for (list<Surface>::iterator itr = surfacelist.begin(); itr != surfacelist.end(); itr++)
+	{
+		of << 3 << " " << itr->mp0 << " " << itr->mp1 << " " << itr->mp2 << endl;
+	}
+
 }
