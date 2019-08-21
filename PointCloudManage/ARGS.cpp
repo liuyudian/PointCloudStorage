@@ -784,7 +784,7 @@ vector<Surface> ARGS::Wanggehua()
 			currentedge = active.front();
 			if (active.empty())
 			{
-				flag1 = 0;
+				 flag1 = 0;
 			}
 				
 		}
