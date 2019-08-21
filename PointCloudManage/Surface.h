@@ -9,6 +9,7 @@ public:
 	Surface(CEdge edge1,CEdge edge2,CEdge edge3);
 	~Surface();
 	// 点的信息
+	vector<pcl::PointXYZ>listPointXYZ;
 	pcl::PointXYZ p0;
 	pcl::PointXYZ p1;
 	pcl::PointXYZ p2;
@@ -23,7 +24,7 @@ public:
 	float GetMaxLen();
 
 	// 判断点是否在三角面片中,???????平面和三维有何不同
-	bool isWithin(pcl::PointXYZ p);
+	bool isWithin(CEdge);
 	void ToString()
 	{
 		std::cout<<"当前三角面片 "<<std::endl;
