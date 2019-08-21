@@ -68,7 +68,7 @@ Surface ARGS::SelectSurface()
 	pcl::getMinMax3D(*cloud, minPt, maxPt);
 	float r = 0;
 	 r = sqrt((abs(maxPt.x - minPt.x)*abs(maxPt.y - minPt.y)*abs(maxPt.z-minPt.z))/ cloud->points.size());
-	std::cout << "r is :"<<r << std::endl;
+	//std::cout << "r is :"<<r << std::endl;
 	do {
 		int sign = 0;
 		//srand(time(NULL));
@@ -624,7 +624,7 @@ void ARGS::GetARGS()
 		listSurfce.push_back(sf);
 		
 	}
-	std::cout << "三角面片 ：" << list.size() << endl;
+	//std::cout << "三角面片 ：" << list.size() << endl;
 	 i = 0;
 	for (auto it = list.begin();it != list.end();it++)
 	{
@@ -686,7 +686,7 @@ vector<Surface> ARGS::Wanggehua()
 	do
 	{
 		surfacelist1.push_back(a);
-		currentedge.ToString();
+		//currentedge.ToString();
 		//std::cout << "hello : " <<  std::endl;
 		//a.ToString();
  		bestpoint = GetCandidate(currentedge, a);
@@ -728,7 +728,7 @@ vector<Surface> ARGS::Wanggehua()
 		a.p1 = bestpoint;
 		a.p2 = currentedge.endNode;
 		//std::cout << "新加入的三角面片 " << std::endl;
-		a.ToString();
+		//a.ToString();
 
 		//surfacelist.push_back(a);
 		//activelist.erase(activelist.begin());
@@ -770,7 +770,7 @@ vector<Surface> ARGS::Wanggehua()
 		i++;
 		std::cout <<"序号:"<< i << std::endl;
 		//7197
-		if (i >20)
+		if (i > 7197)
 		{
 			break;
 		}
