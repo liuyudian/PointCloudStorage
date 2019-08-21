@@ -19,7 +19,7 @@ double Lenmin=0;
 float PI = 3.141592654;
 int GetLineLocation(CEdge currentEdge, pcl::PointXYZ point);
 int flag = 0;
-
+vector<Surface>surfacelist1;
 // 当前三角候选三角面片的周长
 vector<double>listLen;
 double currentLen = 0;
@@ -650,7 +650,7 @@ vector<Surface> ARGS::Wanggehua()
 	pcl::PointXYZ bestpoint;
 	
 	vector<CEdge> activelist;
-	vector<Surface>surfacelist1;
+
 	list<CEdge>active;
 	vector<CEdge> currentlist;
 	CEdge fixededge, currentedge;
@@ -799,7 +799,7 @@ void ARGS::Saveasply()
 	map<MyPoint, int>pointlist;
 	map<MyPoint, int>pointlist1;
 	int i = 0;
-	for (list<Surface>::iterator itr = surfacelist.begin(); itr != surfacelist.end(); itr++) 
+	for (auto itr = surfacelist1.begin(); itr != surfacelist1.end(); itr++)
 	{
 		MyPoint mypoint;
 		mypoint.x = itr->p0.x;
@@ -822,24 +822,24 @@ void ARGS::Saveasply()
 		i++;
 	}
 	map<MyPoint, int>::iterator v;
-	for (list<Surface>::iterator itr = surfacelist.begin(); itr != surfacelist.end(); itr++)
+	for (auto itr = surfacelist1.begin(); itr != surfacelist1.end(); itr++)
 	{
 		MyPoint findpoint;
-		findpoint.x = itr->edge1.startNode.x;
-		findpoint.y = itr->edge1.startNode.y;
-		findpoint.z = itr->edge1.startNode.z;
+		findpoint.x = itr->p0.x;
+		findpoint.y = itr->p0.y;
+		findpoint.z = itr->p0.z;
 		v = pointlist1.find(findpoint);
 		itr->mp0 = v->second;
 		//
-		findpoint.x = itr->edge1.endNode.x;
-		findpoint.y = itr->edge1.endNode.y;
-		findpoint.z = itr->edge1.endNode.z;
+		findpoint.x = itr->p1.x;
+		findpoint.y = itr->p1.y;
+		findpoint.z = itr->p1.z;
 		v = pointlist1.find(findpoint);
 		itr->mp1 = v->second;
 		//
-		findpoint.x = itr->edge2.endNode.x;
-		findpoint.y = itr->edge2.endNode.y;
-		findpoint.z = itr->edge2.endNode.z;
+		findpoint.x = itr->p2.x;
+		findpoint.y = itr->p2.y;
+		findpoint.z = itr->p2.z;
 		v = pointlist1.find(findpoint);
 		itr->mp2 = v->second;
 	}
@@ -859,14 +859,14 @@ void ARGS::Saveasply()
 	of << "property float32 x" << endl;
 	of << "property float32 y" << endl;
 	of << "property float32 z" << endl;
-	of << "element face " << surfacelist.size() << endl;
+	of << "element face " << surfacelist1.size() << endl;
 	of << "property list uint8 int32 vertex_indices" << endl;
 	of << "end_header" << endl;
 	for (map<MyPoint, int>::iterator itr = pointlist1.begin(); itr != pointlist1.end(); itr++)
 	{
 		of << " " << itr->first.x << " " << itr->first.y << " " << itr->first.z << endl;
 	}
-	for (list<Surface>::iterator itr = surfacelist.begin(); itr != surfacelist.end(); itr++)
+	for (auto itr = surfacelist1.begin(); itr != surfacelist1.end(); itr++)
 	{
 		of << 3 << " " << itr->mp0 << " " << itr->mp1 << " " << itr->mp2 << endl;
 	}
