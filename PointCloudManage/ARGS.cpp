@@ -374,7 +374,7 @@ vector<pcl::PointXYZ> GetNewCandidatePoint(vector<pcl::PointXYZ>  RPoint, CEdge 
 		// 新构建的三角形法矢要与活动边构成的三角形法矢属于不同侧
 		vector<double>list=getNormal(currentEdge.startNode, currentEdge.endNode, point);
 		vector<double>listSurface = getNormal(surface.p0, surface.p1, surface.p2);
-		if ((list.size() != 0) && (listSurface.size() != 0))
+		if ((list.size()>=3) && (listSurface.size() >=3))
 		{
 			if (list[1] * listSurface[1] <0)
 			{
@@ -660,7 +660,7 @@ vector<Surface> ARGS::ArgsAlgorithm()
 	int i1 = 0;
 	int i = 0;
 
-
+	// 将种子三角面片的三条边加入到活动边表active中，并在surfacelist中存储每一条边对应的三角面片
 	view->addLine(Orgin.edge1.startNode, Orgin.edge1.endNode, std::to_string(i1));
 	i1++;
 	view->addLine(Orgin.edge2.startNode, Orgin.edge2.endNode, std::to_string(i1));
@@ -688,10 +688,9 @@ vector<Surface> ARGS::ArgsAlgorithm()
 	do
 	{
 		surfacelist1.push_back(a);
-		//currentedge.ToString();
-		//std::cout << "hello : " <<  std::endl;
-		//a.ToString();
+		// 获取最佳点（通过代价和新构建三角片与当前活动边所对应的三角片的法向量来确定最佳点，将所得代价排序，选取最小的点为最佳点）
  		bestpoint = GetCandidate(currentedge, a);
+		// 没有找到最佳点，需要进行出栈，然后选取栈顶元素为当前活动边
 		if (flag == 1)
 		{
 			flag = 0;
@@ -706,38 +705,15 @@ vector<Surface> ARGS::ArgsAlgorithm()
 			else
 				break;
 		}
+		// 找到最佳点后，以当前活动边以及最佳点最为新的三角片，并将新的三角片中的新的两条边加入到活动边表中，并更新当前活动边。
 		CEdge edge2(bestpoint, currentedge.endNode), edge1(currentedge.startNode,bestpoint);
-		/*if (flag == 1)
-		{
-			flag = 0;
-			if (activelist.size() != 0)
-			{
-				activelist.erase(activelist.begin());
-				currentedge = activelist[0];
-				i--;
-				continue;
-			}
 
-		}*/
-		/*edge1.startNode = currentedge.startNode;
-		edge1.endNode = bestpoint;
-		edge2.startNode = currentedge.endNode;
-		edge2.endNode = bestpoint;*/
 		a.edge1 = edge1;
 		a.edge2 = edge2;
 		a.edge3 = currentedge;
 		a.p0 = currentedge.startNode;
 		a.p1 = bestpoint;
 		a.p2 = currentedge.endNode;
-		//std::cout << "新加入的三角面片 " << std::endl;
-		//a.ToString();
-
-		//surfacelist.push_back(a);
-		//activelist.erase(activelist.begin());
-		/*if (active.size() <=0|| surfacelist.size()<=0)
-		{
-			break;
-		}*/
 		if(active.size()>0)
 		{
 		active.pop_front();
@@ -749,30 +725,24 @@ vector<Surface> ARGS::ArgsAlgorithm()
 		}
 		else break;
 
-		//activelist.insert(activelist.begin(), edge1);
-		//activelist.insert(activelist.begin(), edge2);
-		/*if(c1.isWithin(currentedge))
-		{
-		    达到终边
-			active.pop_front();
-			surfacelist.pop_front();
-			currentedge = active.front();
-        }*/
+
 		currentedge = active.front();
+		// 判断新生成的当前活动边是否已经为访问过的活动边，若已经访问过则出栈。
 		while (count(currentlist.begin(),currentlist.end(), currentedge)>0)
 		{
 			active.pop_front();
 			surfacelist.pop_front();
 			currentedge = active.front();
 		}
+		// 当前活动边所对应的三角片
 		a = surfacelist.front();
+		// 记录已经访问过的活动边
 		currentlist.push_back(currentedge);
-		//currentedge = activelist[0];
-		// view->addLine(surfacelist[0].edge1.startNode, surfacelist[0].edge1.endNode, std::to_string(i));
+
 		i++;
 		std::cout <<"序号:"<< i << std::endl;
-		//7197
-		if (i > 7197)
+
+		if (i > 10)
 		{
 			break;
 		}
@@ -846,7 +816,7 @@ void ARGS::Saveasply()
 		itr->mp2 = v->second;
 	}
 	//
-	string fileName = "bunny.ply";
+	string fileName = "plane.ply";
 	ofstream of(fileName.c_str());
 	of.precision(std::numeric_limits<double>::digits10);
 	//ofstream OpenFile("D:\\vs2017projects\\Task2\\testmap.ply");
@@ -874,3 +844,4 @@ void ARGS::Saveasply()
 	}
 
 }
+

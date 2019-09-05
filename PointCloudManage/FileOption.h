@@ -14,8 +14,6 @@
 #include <iostream>
 #include <map>
 #include "MyPoint.h"
-
-
 /*
 
 	点云的文件操作
@@ -29,7 +27,6 @@ public:
 	map<int, MyPoint> _mapPoint;
 	FileOption();
 	~FileOption();
-
 	//功能函数
 
 	void ReadAscFile(const char *cfilename); //读取.asc文件
